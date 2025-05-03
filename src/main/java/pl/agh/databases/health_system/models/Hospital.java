@@ -16,6 +16,10 @@ public class Hospital {
     public Hospital() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getEmail() {
         return email;
     }

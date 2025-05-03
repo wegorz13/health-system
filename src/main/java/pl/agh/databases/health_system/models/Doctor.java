@@ -8,27 +8,30 @@ import org.springframework.data.neo4j.core.schema.Node;
 public class Doctor {
     @Id @GeneratedValue
     private Long id;
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private double salary;
     private String specialty;
 
     public Doctor() {}
 
-    public String getFirstName() {
-        return firstName;
+    public Long getId() {
+        return id;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getLastName() {
-        return lastName;
+    public void setSalary(double salary) {
+        this.salary = salary;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public double getSalary() {

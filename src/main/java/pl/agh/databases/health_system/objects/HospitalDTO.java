@@ -6,16 +6,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HospitalDTO {
+    private Long id;
     private String name;
     private String address;
     private List<Doctor> doctors = new ArrayList<Doctor>();
     private String phone;
     private String email;
 
-    public HospitalDTO(String name, String address, String phone, String email) {
+    public HospitalDTO(Long id, String name, String address, String phone, String email) {
         this.name = name;
         this.address = address;
         this.phone = phone;
+        this.email = email;
+    }
+
+    public HospitalDTO() {
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setEmail(String email) {
         this.email = email;
     }
 

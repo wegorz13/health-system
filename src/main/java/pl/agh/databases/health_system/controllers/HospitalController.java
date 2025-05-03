@@ -27,8 +27,8 @@ public class HospitalController {
     public ResponseEntity<List<HospitalDTO>> hospitalIndex(){
         List<Hospital> hospitals = hospitalService.getAllHospitals();
         List<HospitalDTO> responseHospitals = hospitals.stream().map((hospital) -> {
-            HospitalDTO responseHospital = new HospitalDTO(hospital.getName(), hospital.getAddress(), hospital.getPhone(), hospital.getEmail());
-            responseHospital.setDoctors(doctorService.getAllDoctorsByHospitalName(hospital.getName()));
+            HospitalDTO responseHospital = new HospitalDTO(hospital.getId(), hospital.getName(), hospital.getAddress(), hospital.getPhone(), hospital.getEmail());
+            responseHospital.setDoctors(doctorService.getAllDoctorsByHospitalId(hospital.getId()));
 
             return responseHospital;
         }).toList();
@@ -40,8 +40,8 @@ public class HospitalController {
     public ResponseEntity<HospitalDTO> hospitalDetails(@PathVariable Long id){
         Hospital hospital = hospitalService.getHospitalById(id);
 
-        HospitalDTO responseHospital = new HospitalDTO(hospital.getName(), hospital.getAddress(), hospital.getPhone(), hospital.getEmail());
-        responseHospital.setDoctors(doctorService.getAllDoctorsByHospitalName(hospital.getName()));
+        HospitalDTO responseHospital = new HospitalDTO(hospital.getId(), hospital.getName(), hospital.getAddress(), hospital.getPhone(), hospital.getEmail());
+        responseHospital.setDoctors(doctorService.getAllDoctorsByHospitalId(hospital.getId()));
 
         return new ResponseEntity<>(responseHospital, HttpStatus.OK);
     }

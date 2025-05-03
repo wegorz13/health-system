@@ -9,9 +9,11 @@ import pl.agh.databases.health_system.requests.CreatePatientRequest;
 import pl.agh.databases.health_system.services.PatientService;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/patients")
 public class PatientController {
     private final PatientService patientService;
 
@@ -19,17 +21,32 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @GetMapping("/me")
+    @GetMapping("/auth/me")
     public String loggedInUser(Principal principal) {
         return principal.getName();
     }
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<PatientDTO> signUp(@RequestBody CreatePatientRequest request){
         Patient patient = patientService.createPatient(request);
 
         PatientDTO responsePatient = new PatientDTO(patient.getFirstName(), patient.getLastName(), patient.getUsername(), patient.getEmail(), patient.getDateOfBirth(), patient.getGender(), patient.getRoles());
 
         return new ResponseEntity<>(responsePatient, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/relatives/{id}")
+    public ResponseEntity<List<PatientDTO>> relatives(@PathVariable("id") Long id){
+        List<Patient> relatives = patientService.getRelatives(id);
+
+        List<PatientDTO> relativesDTOS = relatives.stream().map((patient -> {
+            PatientDTO relativeDTO = new PatientDTO();
+            relativeDTO.setFirstName(patient.getFirstName());
+            relativeDTO.setLastName(patient.getLastName());
+            relativeDTO.setUsername(patient.getUsername());
+            return relativeDTO;
+        })).toList();
+
+        return new ResponseEntity<>(relativesDTOS, HttpStatus.OK);
     }
 }

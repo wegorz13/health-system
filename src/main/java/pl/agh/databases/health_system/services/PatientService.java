@@ -6,6 +6,9 @@ import pl.agh.databases.health_system.models.Patient;
 import pl.agh.databases.health_system.repositories.PatientRepository;
 import pl.agh.databases.health_system.requests.CreatePatientRequest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class PatientService {
     private final PatientRepository patientRepository;
@@ -18,7 +21,7 @@ public class PatientService {
 
     public Patient createPatient(CreatePatientRequest request) {
         Patient patient = new Patient();
-
+        // TODO: check if username and email is unique
         patient.setFirstName(request.getFirstName());
         patient.setLastName(request.getLastName());
         patient.setEmail(request.getEmail());
@@ -26,8 +29,14 @@ public class PatientService {
         patient.setGender(request.getGender());
         patient.setGender(request.getGender());
         patient.setPassword(passwordEncoder.encode(request.getPassword()));
+        patient.setRoles(request.getRoles());
+        patient.setUsername(request.getUsername());
 
         patientRepository.save(patient);
         return patient;
+    }
+
+    public List<Patient> getRelatives(Long id) {
+        return patientRepository.findRelativesById(id).orElse(new ArrayList<>());
     }
 }

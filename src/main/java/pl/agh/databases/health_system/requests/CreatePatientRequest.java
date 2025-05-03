@@ -18,9 +18,9 @@ public class CreatePatientRequest {
         this.dateOfBirth = dateOfBirth;
         this.username = username;
         this.password = password;
-        this.roles = roles;
         this.email = email;
         this.gender = gender;
+        this.roles = roles;
     }
 
     public String getFirstName() {

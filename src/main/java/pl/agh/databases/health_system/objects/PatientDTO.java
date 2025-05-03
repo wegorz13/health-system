@@ -11,6 +11,8 @@ public class PatientDTO {
     private String gender;
     private String roles;
 
+    public PatientDTO() {}
+
     public PatientDTO(String firstName, String lastName, String username, String email, LocalDate dateOfBirth, String gender, String roles) {
         this.firstName = firstName;
         this.lastName = lastName;
