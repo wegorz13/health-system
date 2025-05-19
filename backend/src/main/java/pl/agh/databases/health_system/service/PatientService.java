@@ -10,6 +10,9 @@ import pl.agh.databases.health_system.domain.Patient;
 import pl.agh.databases.health_system.repository.PatientRepository;
 import pl.agh.databases.health_system.dto.request.CreatePatientRequest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PatientService {
@@ -25,5 +28,7 @@ public class PatientService {
         Patient savedPatient = patientRepository.save(patient);
         return patientMapper.toResponse(savedPatient);
     }
-
+    public List<Patient> getRelatives(Long id) {
+        return patientRepository.findRelativesById(id).orElse(new ArrayList<>());
+    }
 }

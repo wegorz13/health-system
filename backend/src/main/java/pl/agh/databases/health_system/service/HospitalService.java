@@ -35,8 +35,9 @@ public class HospitalService {
     }
 
     private void enrichWithDoctors(HospitalDTO hospitalDTO) {
-        var doctors = doctorService.getAllDoctorsByHospitalName(hospitalDTO.getName());
-        hospitalDTO.setDoctors(doctors);
+//        TODO
+//        var doctors = doctorService.getAllDoctorsByHospitalName(hospitalDTO.getName());
+//        hospitalDTO.setDoctors(doctors);
     }
 
 

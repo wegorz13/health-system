@@ -1,4 +1,4 @@
-package pl.agh.databases.health_system.objects;
+package pl.agh.databases.health_system.dto;
 
 import java.util.List;
 

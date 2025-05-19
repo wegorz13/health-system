@@ -1,13 +1,12 @@
 package pl.agh.databases.health_system.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import pl.agh.databases.health_system.domain.Hospital;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pl.agh.databases.health_system.dto.HospitalDTO;
-import pl.agh.databases.health_system.mapper.HospitalMapper;
-import pl.agh.databases.health_system.service.DoctorService;
 import pl.agh.databases.health_system.service.HospitalService;
 
 import java.util.List;
