@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.agh.databases.health_system.domain.Patient;
 import pl.agh.databases.health_system.dto.PatientDTO;
+import pl.agh.databases.health_system.dto.VisitDTO;
 import pl.agh.databases.health_system.dto.request.CreatePatientRequest;
 import pl.agh.databases.health_system.dto.response.PatientResponse;
 import pl.agh.databases.health_system.service.PatientService;
@@ -30,18 +30,17 @@ public class PatientController {
         return ResponseEntity.ok(patient);
     }
     @GetMapping("/relatives/{id}")
-    public ResponseEntity<List<PatientDTO>> relatives(@PathVariable("id") Long id){
-        List<Patient> relatives = patientService.getRelatives(id);
-
-        List<PatientDTO> relativesDTOS = relatives.stream().map((patient -> {
-            PatientDTO relativeDTO = new PatientDTO();
-            relativeDTO.setFirstName(patient.getFirstName());
-            relativeDTO.setLastName(patient.getLastName());
-            relativeDTO.setUsername(patient.getUsername());
-            return relativeDTO;
-        })).toList();
+    public ResponseEntity<List<PatientDTO>> getRelatives(@PathVariable("id") Long id){
+        List<PatientDTO> relativesDTOS = patientService.getRelatives(id);
 
         return new ResponseEntity<>(relativesDTOS, HttpStatus.OK);
+    }
+
+    @GetMapping("/visits/{id}")
+    public ResponseEntity<List<VisitDTO>> getPatientVisits(@PathVariable("id") Long patientId){
+        List<VisitDTO> visits = patientService.getPatientVisits(patientId);
+
+        return new ResponseEntity<>(visits, HttpStatus.OK);
     }
 
 }

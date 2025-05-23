@@ -25,22 +25,21 @@ public class DoctorController {
 
     @GetMapping("/")
     public ResponseEntity<List<DoctorDTO>> getAllDoctors() {
-        List<Doctor> doctors = doctorService.getAllDoctors();
-
-        List<DoctorDTO> doctorDTOs = doctors.stream().map((doctor) -> {
-            DoctorDTO doctorDTO = new DoctorDTO();
-            doctorDTO.setId(doctor.getId());
-            doctorDTO.setFullName(doctor.getFirstName()+" "+doctor.getLastName());
-            doctorDTO.setSpecialty(doctor.getSpecialty());
-            return doctorDTO;
-        } ).toList();
+        List<DoctorDTO> doctorDTOs = doctorService.getAllDoctors();
 
         return new ResponseEntity<>(doctorDTOs, HttpStatus.OK);
     }
 
+    @GetMapping("/patient/{id}")
+    public ResponseEntity<List<DoctorDTO>> getDoctorsForPatient(@PathVariable("id") Long id) {
+        List<DoctorDTO> doctorDTOS = doctorService.getAllDoctorsByPatientId(id);
+
+        return new ResponseEntity<>(doctorDTOS, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<DoctorDTO> doctorDetails(@PathVariable("id") Long id) {
-        Map<HospitalDTO, List<String>> hospitalsWithHours = doctorService.getDoctorDetails(id);
+    public ResponseEntity<DoctorDTO> getDoctorDetails(@PathVariable("id") Long id) {
+        Map<HospitalDTO, List<String>> hospitalsWithHours = doctorService.getDoctorWorkingHours(id);
         Doctor doctor = doctorService.getDoctorById(id);
         DoctorDTO doctorDTO = new DoctorDTO(doctor.getId(), doctor.getFirstName()+" "+doctor.getLastName(), doctor.getSpecialty(), hospitalsWithHours);
 
