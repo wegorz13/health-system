@@ -8,6 +8,7 @@ import pl.agh.databases.health_system.dto.HospitalDTO;
 public class HospitalMapper {
     public HospitalDTO toDTO(Hospital hospital) {
         return new HospitalDTO(
+                hospital.getId(),
                 hospital.getName(),
                 hospital.getAddress(),
                 hospital.getPhone(),

@@ -8,7 +8,7 @@ import pl.agh.databases.health_system.dto.HospitalWithHours;
 import java.util.List;
 
 public interface DoctorRepository extends Neo4jRepository<Doctor, Long> {
-    @Query("MATCH (:Hospital {id: $hospitalId}) <- [:WORKS_AT] - (docs:Doctor) RETURN docs")
+    @Query("MATCH (h:Hospital) WHERE id(h) = $hospitalId MATCH (h) <-[:WORKS_AT]-(docs:Doctor) RETURN docs")
     List<Doctor> findDoctorsByHospitalId(Long hospitalId);
 
     @Query("MATCH (:Patient {id: $patientId}) <- [:BELONGS_TO_PATIENT] - (:Visit) <- [:CONDUCTED_BY] - (docs:Doctor) RETURN docs")

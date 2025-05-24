@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import pl.agh.databases.health_system.domain.Doctor;
 import pl.agh.databases.health_system.domain.Hospital;
 import pl.agh.databases.health_system.dto.HospitalDTO;
 import pl.agh.databases.health_system.mapper.HospitalMapper;
@@ -35,11 +36,10 @@ public class HospitalService {
     }
 
     private void enrichWithDoctors(HospitalDTO hospitalDTO) {
-//        TODO
-//        var doctors = doctorService.getAllDoctorsByHospitalName(hospitalDTO.getName());
-//        hospitalDTO.setDoctors(doctors);
+        List<Doctor> doctors = doctorService.getAllDoctorsByHospitalId(hospitalDTO.getId());
+        System.out.println(hospitalDTO.getId());
+        System.out.println(doctors.size());
+        hospitalDTO.setDoctors(doctors);
     }
-
-
 }
 
