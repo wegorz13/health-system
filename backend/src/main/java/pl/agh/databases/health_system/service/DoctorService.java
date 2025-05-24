@@ -5,11 +5,12 @@ import org.springframework.stereotype.Service;
 import pl.agh.databases.health_system.domain.Doctor;
 import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.HospitalDTO;
-import pl.agh.databases.health_system.dto.HospitalWithHours;
+import pl.agh.databases.health_system.dto.HospitalWithHoursDTO;
 import pl.agh.databases.health_system.repository.DoctorRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,14 +41,14 @@ public class DoctorService {
          ).toList();
     }
 
-    public Map<HospitalDTO, List<String>> getDoctorWorkingHours(Long id) {
-        List<HospitalWithHours> list = doctorRepository.findDoctorDetails(id);
+    public DoctorDTO getDoctorDetails(Long id) {
+        List<HospitalWithHoursDTO> hospitalsWithHours = doctorRepository.findDoctorDetails(id);
+        Doctor doctor = doctorRepository.findById(id).orElse(null);
 
-        return list.stream().collect(Collectors.toMap(
-                HospitalWithHours::getHospital, HospitalWithHours::getHours));
-    }
+        if (doctor == null){
+            throw new RuntimeException("Doctor not found"); //TODO
+        }
 
-    public Doctor getDoctorById(Long id) {
-        return doctorRepository.findById(id).orElse(null);
+        return new DoctorDTO(doctor.getId(), doctor.getFirstName()+" "+doctor.getLastName(), doctor.getSpecialty(), hospitalsWithHours);
     }
 }

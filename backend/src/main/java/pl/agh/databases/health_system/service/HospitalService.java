@@ -37,8 +37,6 @@ public class HospitalService {
 
     private void enrichWithDoctors(HospitalDTO hospitalDTO) {
         List<Doctor> doctors = doctorService.getAllDoctorsByHospitalId(hospitalDTO.getId());
-        System.out.println(hospitalDTO.getId());
-        System.out.println(doctors.size());
         hospitalDTO.setDoctors(doctors);
     }
 }

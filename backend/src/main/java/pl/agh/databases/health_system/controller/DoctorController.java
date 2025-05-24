@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.agh.databases.health_system.domain.Doctor;
 import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.HospitalDTO;
+import pl.agh.databases.health_system.dto.HospitalWithHoursDTO;
 import pl.agh.databases.health_system.service.DoctorService;
 
 import java.util.List;
@@ -39,9 +40,7 @@ public class DoctorController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DoctorDTO> getDoctorDetails(@PathVariable("id") Long id) {
-        Map<HospitalDTO, List<String>> hospitalsWithHours = doctorService.getDoctorWorkingHours(id);
-        Doctor doctor = doctorService.getDoctorById(id);
-        DoctorDTO doctorDTO = new DoctorDTO(doctor.getId(), doctor.getFirstName()+" "+doctor.getLastName(), doctor.getSpecialty(), hospitalsWithHours);
+        DoctorDTO doctorDTO = doctorService.getDoctorDetails(id);
 
         return new ResponseEntity<>(doctorDTO, HttpStatus.OK);
     }

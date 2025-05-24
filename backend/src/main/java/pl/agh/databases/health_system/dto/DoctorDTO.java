@@ -14,6 +14,6 @@ public class DoctorDTO {
     private Long id;
     private String fullName;
     private String specialty;
-    private Map<HospitalDTO, List<String>> workingHours;
+    private List<HospitalWithHoursDTO> workingHours;
 
 }
