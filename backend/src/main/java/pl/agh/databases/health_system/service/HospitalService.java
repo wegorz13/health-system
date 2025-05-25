@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import pl.agh.databases.health_system.domain.Doctor;
 import pl.agh.databases.health_system.domain.Hospital;
+import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.HospitalDTO;
 import pl.agh.databases.health_system.mapper.HospitalMapper;
 import pl.agh.databases.health_system.repository.HospitalRepository;
@@ -36,7 +37,7 @@ public class HospitalService {
     }
 
     private void enrichWithDoctors(HospitalDTO hospitalDTO) {
-        List<Doctor> doctors = doctorService.getAllDoctorsByHospitalId(hospitalDTO.getId());
+        List<DoctorDTO> doctors = doctorService.getAllDoctorsByHospitalId(hospitalDTO.getId());
         hospitalDTO.setDoctors(doctors);
     }
 }

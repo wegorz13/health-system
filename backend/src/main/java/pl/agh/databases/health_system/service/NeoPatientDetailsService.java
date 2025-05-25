@@ -12,7 +12,6 @@ import pl.agh.databases.health_system.repository.PatientRepository;
 public class NeoPatientDetailsService implements UserDetailsService {
     private final PatientRepository patientRepository;
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return patientRepository.findPatientByUsername(username).orElseThrow(() -> new UsernameNotFoundException("username not found: " + username));

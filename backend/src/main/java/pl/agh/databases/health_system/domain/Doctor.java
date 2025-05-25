@@ -19,4 +19,5 @@ public class Doctor {
     private double salary;
     private String specialty;
 
+
 }

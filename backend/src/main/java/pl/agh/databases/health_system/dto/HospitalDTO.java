@@ -12,7 +12,7 @@ public class HospitalDTO {
     private Long id;
     private String name;
     private String address;
-    private List<Doctor> doctors = new ArrayList<>();
+    private List<DoctorDTO> doctors = new ArrayList<>();
     private String phone;
     private String email;
 

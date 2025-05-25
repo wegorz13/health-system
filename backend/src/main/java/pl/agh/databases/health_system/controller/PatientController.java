@@ -26,21 +26,16 @@ public class PatientController {
 
     @PostMapping("/auth/register")
     public ResponseEntity<PatientResponse> registerPatient(@RequestBody CreatePatientRequest request) {
-        PatientResponse patient = patientService.createPatient(request);
-        return ResponseEntity.ok(patient);
+        return ResponseEntity.ok(patientService.createPatient(request));
     }
     @GetMapping("/relatives/{id}")
     public ResponseEntity<List<PatientDTO>> getRelatives(@PathVariable("id") Long id){
-        List<PatientDTO> relativesDTOS = patientService.getRelatives(id);
-
-        return new ResponseEntity<>(relativesDTOS, HttpStatus.OK);
+        return new ResponseEntity<>(patientService.getRelatives(id), HttpStatus.OK);
     }
 
     @GetMapping("/visits/{id}")
     public ResponseEntity<List<VisitDTO>> getPatientVisits(@PathVariable("id") Long patientId){
-        List<VisitDTO> visits = patientService.getPatientVisits(patientId);
-
-        return new ResponseEntity<>(visits, HttpStatus.OK);
+        return new ResponseEntity<>(patientService.getPatientVisits(patientId), HttpStatus.OK);
     }
 
 }

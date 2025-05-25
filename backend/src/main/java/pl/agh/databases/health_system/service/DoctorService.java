@@ -18,9 +18,14 @@ import java.util.stream.Collectors;
 public class DoctorService {
     private final DoctorRepository doctorRepository;
 
-
-    public List<Doctor> getAllDoctorsByHospitalId(Long hospitalId) {
-        return doctorRepository.findDoctorsByHospitalId(hospitalId);
+    public List<DoctorDTO> getAllDoctorsByHospitalId(Long hospitalId) {
+        return doctorRepository.findDoctorsByHospitalId(hospitalId).stream()
+                .map((doc) ->
+                        DoctorDTO.builder()
+                                .id(doc.getId())
+                                .fullName(doc.getFirstName()+" "+doc.getLastName())
+                                .specialty(doc.getSpecialty()).build())
+                .toList();
     }
 
     public List<DoctorDTO> getAllDoctorsByPatientId(Long patientId) {

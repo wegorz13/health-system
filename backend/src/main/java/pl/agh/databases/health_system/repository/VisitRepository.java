@@ -23,4 +23,20 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
       h.address AS address
     """)
     List<VisitDTO> findByPatientId(Long patientId);
+    @Query("""
+    MATCH (d:Doctor {id: $doctorId})
+      <-[:CONDUCTED_BY]-(v:Visit)
+      -[:BELONGS_TO_PATIENT]->(p:Patient),
+          (v)-[:TOOK_PLACE_IN]->(h:Hospital)
+    RETURN 
+      v.id AS id,
+      v.date AS date,
+      v.cost AS cost,
+      v.prescriptions AS prescriptions,
+      v.patientsCondition AS patientsCondition,
+      p.firstName + ' ' + p.lastName AS patientFullName,
+      h.address AS address
+    """)
+    List<VisitDTO> findByDoctorId(Long doctorId);
+
 }
