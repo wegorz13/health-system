@@ -9,8 +9,10 @@ import java.util.List;
 
 public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     @Query("""
-    MATCH (p:Patient {id: $patientId})
-      <-[:BELONGS_TO_PATIENT]-(v:Visit)
+    MATCH (p:Patient )
+    WHERE id(p)=$patientId
+    MATCH
+      (p)<-[:BELONGS_TO_PATIENT]-(v:Visit)
       <-[:CONDUCTED_BY]-(d:Doctor),
           (v)-[:TOOK_PLACE_IN]->(h:Hospital)
     RETURN 
@@ -24,8 +26,10 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     """)
     List<VisitDTO> findByPatientId(Long patientId);
     @Query("""
-    MATCH (d:Doctor {id: $doctorId})
-      <-[:CONDUCTED_BY]-(v:Visit)
+    MATCH (d:Doctor)
+    WHERE id(d)=$doctorId
+    MATCH
+      (d)<-[:CONDUCTED_BY]-(v:Visit)
       -[:BELONGS_TO_PATIENT]->(p:Patient),
           (v)-[:TOOK_PLACE_IN]->(h:Hospital)
     RETURN 

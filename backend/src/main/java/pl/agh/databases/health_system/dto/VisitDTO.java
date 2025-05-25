@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Builder
 public class VisitDTO {
     private Long id;
-    private Date date;
+    private LocalDate date;
     private double cost;
     private List<String> prescriptions;
     private String patientsCondition;
