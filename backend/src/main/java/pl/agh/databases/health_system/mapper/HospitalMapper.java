@@ -7,7 +7,7 @@ import pl.agh.databases.health_system.dto.HospitalDTO;
 @Component
 public class HospitalMapper {
 
-    public HospitalDTO toDTO(Hospital hospital) {
+    public static HospitalDTO toDTO(Hospital hospital) {
         return new HospitalDTO(
                 hospital.getId(),
                 hospital.getName(),

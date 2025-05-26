@@ -10,7 +10,7 @@ import pl.agh.databases.health_system.domain.Patient;
 @RequiredArgsConstructor
 public class PatientMapper {
 
-    public Patient toEntity(CreatePatientRequest request) {
+    public static Patient toEntity(CreatePatientRequest request) {
         Patient patient = new Patient();
         patient.setFirstName(request.getFirstName());
         patient.setLastName(request.getLastName());
@@ -22,7 +22,7 @@ public class PatientMapper {
 
     }
 
-    public PatientResponse toResponse(Patient patient) {
+    public static PatientResponse toResponse(Patient patient) {
         return PatientResponse.builder()
                 .firstName(patient.getFirstName())
                 .lastName(patient.getLastName())

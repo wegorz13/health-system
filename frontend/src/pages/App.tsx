@@ -1,17 +1,14 @@
-import '../App.css'
-import ResponsiveAppBar from "../components/ResponsiveAppBar.tsx";
-import Box from "@mui/material/Box";
-import Searcher from "../components/Searcher.tsx";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Searcher from "../components/Searcher";
+import DoctorPage from "./DoctorPage";
 
-function App() {
+export default function App() {
     return (
-    <>
-        <ResponsiveAppBar></ResponsiveAppBar>
-        <Box sx={{mt:8}}>
-            <Searcher></Searcher>
-        </Box>
-    </>
-  )
+        <Router>
+            <Routes>
+                <Route path="/" element={<Searcher />} />
+                <Route path="/doctor/:id" element={<DoctorPage />} />
+            </Routes>
+        </Router>
+    );
 }
-
-export default App

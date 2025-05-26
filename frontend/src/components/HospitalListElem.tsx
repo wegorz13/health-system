@@ -1,11 +1,11 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import type {Doctor} from "../types/doctor.ts";
+import type {Hospital} from "../types/hospital.ts";
 import {Paper} from "@mui/material";
 import Typography from "@mui/material/Typography";
 
-export default function doctorListElem(props:{doctor: Doctor}) {
-    const {doctor} = props;
+export default function HospitalListElem(props:{hospital: Hospital}) {
+    const {hospital} = props;
 
     return (
         <Box sx={{ flexGrow: 1, p: 2 }}>
@@ -13,12 +13,12 @@ export default function doctorListElem(props:{doctor: Doctor}) {
                 <Grid container spacing={2}>
                     <Grid size={{xs:12}}>
                         <Typography variant="h5" fontWeight="bold">
-                            {doctor.fullName}
+                            {hospital.name}
                         </Typography>
                     </Grid>
                     <Grid size={{xs:12, sm:6, md:4}}>
                         <Typography variant="subtitle1" color="text.secondary">
-                            Specialty: {doctor.specialty}
+                            Address: {hospital.address}
                         </Typography>
                     </Grid>
                 </Grid>

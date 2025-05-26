@@ -9,7 +9,7 @@ export default function ComboBox() {
             disablePortal
             options={mockCities}
             sx={{ width: 150, m:1 }}
-            renderInput={(params) => <TextField {...params} label="Movie" />}
+            renderInput={(params) => <TextField {...params} label="City" />}
         />
     );
 }

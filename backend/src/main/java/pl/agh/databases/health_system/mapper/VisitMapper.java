@@ -8,7 +8,7 @@ import pl.agh.databases.health_system.dto.VisitDTO;
 @Component
 @RequiredArgsConstructor
 public class VisitMapper {
-    public VisitDTO mapToDTO(Visit visit) {
+    public static VisitDTO mapToDTO(Visit visit) {
         return VisitDTO.builder()
                 .id(visit.getId())
                 .date(visit.getDate())

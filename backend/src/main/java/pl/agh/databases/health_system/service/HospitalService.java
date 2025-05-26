@@ -18,11 +18,10 @@ import java.util.List;
 public class HospitalService {
     private final HospitalRepository hospitalRepository;
     private final DoctorService doctorService;
-    private final HospitalMapper hospitalMapper;
 
     public List<HospitalDTO> getAllHospitalsWithDoctors() {
         return hospitalRepository.findAll().stream()
-                .map(hospitalMapper::toDTO)
+                .map(HospitalMapper::toDTO)
                 .peek(this::enrichWithDoctors)
                 .toList();
     }
@@ -31,7 +30,7 @@ public class HospitalService {
         Hospital hospital = hospitalRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404)));
 
-        HospitalDTO hospitalDTO = hospitalMapper.toDTO(hospital);
+        HospitalDTO hospitalDTO = HospitalMapper.toDTO(hospital);
         enrichWithDoctors(hospitalDTO);
         return hospitalDTO;
     }
