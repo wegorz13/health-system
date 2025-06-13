@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.PatientDTO;
 import pl.agh.databases.health_system.dto.VisitDTO;
 import pl.agh.databases.health_system.dto.request.CreatePatientRequest;
@@ -38,4 +39,8 @@ public class PatientController {
         return new ResponseEntity<>(patientService.getPatientVisits(patientId), HttpStatus.OK);
     }
 
+    @GetMapping("/recommended/relatives/{id}")
+    public ResponseEntity<List<DoctorDTO>> getPatientRelativesRecommendedDoctors(@PathVariable("id") Long patientId, @RequestParam int depth){
+        return new ResponseEntity<>(patientService.getPatientRelativesRecommendedDoctors(patientId, depth), HttpStatus.OK);
+    }
 }

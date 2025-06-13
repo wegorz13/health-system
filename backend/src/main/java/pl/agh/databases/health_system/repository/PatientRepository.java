@@ -12,4 +12,7 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
 
     @Query("MATCH (:Patient {id: $patientId}) <- [:IS_RELATED] - (relatives:Patient) RETURN relatives")
     List<Patient> findRelativesById(Long patientId);
+
+    @Query("MATCH (:Patient {id: $patientId}) - [:IS_RELATED*1..$depth] -> (relative:Patient) RETURN DISTINCT relative")
+    List<Long> findNthRelativesIdsByPatientId(Long patientId, int depth);
 }
