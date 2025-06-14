@@ -8,7 +8,7 @@ import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.PatientDTO;
 import pl.agh.databases.health_system.dto.VisitDTO;
 import pl.agh.databases.health_system.dto.response.PatientResponse;
-import pl.agh.databases.health_system.exceptions.IsAlreadyRelativeException;
+import pl.agh.databases.health_system.exceptions.PatientAlreadyRelativeException;
 import pl.agh.databases.health_system.exceptions.ResourceNotFoundException;
 import pl.agh.databases.health_system.mapper.DoctorMapper;
 import pl.agh.databases.health_system.mapper.PatientMapper;
@@ -59,15 +59,11 @@ public class PatientService {
     }
 
     public void addRelative(Long patientId, Long relativeId) {
-        Patient patient = patientRepository.findById(patientId).orElse(null);
-        Patient relative = patientRepository.findById(relativeId).orElse(null);
-
-        if (patient == null || relative == null) {
-            throw new ResourceNotFoundException("Patient not found");
-        }
+        patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+        patientRepository.findById(relativeId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         if (patientRepository.verifyIsRelative(patientId, relativeId)){
-            throw new IsAlreadyRelativeException(patientId, relativeId);
+            throw new PatientAlreadyRelativeException(patientId, relativeId);
         }
 
         patientRepository.addRelativeToPatient(patientId, relativeId);

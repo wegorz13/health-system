@@ -15,8 +15,13 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(IsAlreadyRelativeException.class)
+    @ExceptionHandler(PatientAlreadyRelativeException.class)
     public ResponseEntity<String> handleIsAlreadyRelative(ResourceNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(VisitDateTakenException.class)
+    public ResponseEntity<String> handleVisitDateTaken(ResourceNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 

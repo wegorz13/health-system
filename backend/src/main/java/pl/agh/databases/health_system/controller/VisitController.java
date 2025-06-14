@@ -31,8 +31,8 @@ public class VisitController {
         return new ResponseEntity<>(visitService.getVisitDetails(id), HttpStatus.OK);
     }
 
-//    @PostMapping("/")
-//    public ResponseEntity<VisitDTO> createVisit(@RequestBody CreateVisitRequest request) {
-//        return new ResponseEntity<>(visitService.createVisit(request), HttpStatus.CREATED);
-//    }
+    @PostMapping("/")
+    public ResponseEntity<VisitDTO> createVisit(@RequestBody CreateVisitRequest request) {
+        return new ResponseEntity<>(visitService.createVisit(request), HttpStatus.CREATED);
+    }
 }
