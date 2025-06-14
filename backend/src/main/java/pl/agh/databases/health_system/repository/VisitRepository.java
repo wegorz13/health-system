@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import pl.agh.databases.health_system.domain.Visit;
 import pl.agh.databases.health_system.dto.VisitDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface VisitRepository extends Neo4jRepository<Visit, Long> {
@@ -43,4 +44,6 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     """)
     List<VisitDTO> findByDoctorId(Long doctorId);
 
+    //TODO
+    boolean isVisitDateFree(Long doctorId, LocalDate date);
 }
