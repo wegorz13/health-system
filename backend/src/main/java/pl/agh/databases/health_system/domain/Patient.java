@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @Node
 @Getter
@@ -29,6 +31,10 @@ public class Patient implements UserDetails {
     private LocalDate dateOfBirth;
     private String gender;
     private String roles;
+
+    @Relationship(type = "HAS_VISIT")
+    private List<Visit> visits;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

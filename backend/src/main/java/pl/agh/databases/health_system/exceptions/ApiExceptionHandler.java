@@ -16,12 +16,17 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(PatientAlreadyRelativeException.class)
-    public ResponseEntity<String> handleIsAlreadyRelative(ResourceNotFoundException ex) {
+    public ResponseEntity<String> handlePatientAlreadyRelative(PatientAlreadyRelativeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(VisitDateTakenException.class)
-    public ResponseEntity<String> handleVisitDateTaken(ResourceNotFoundException ex) {
+    @ExceptionHandler(PatientAlreadyRecommendsVisitException.class)
+    public ResponseEntity<String> handlePatientAlreadyRecommendsDoctor(PatientAlreadyRecommendsVisitException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UnavailableVisitDateException.class)
+    public ResponseEntity<String> handleVisitDateTaken(UnavailableVisitDateException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 

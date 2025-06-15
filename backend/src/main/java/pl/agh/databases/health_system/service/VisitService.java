@@ -4,17 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import pl.agh.databases.health_system.domain.Doctor;
+import pl.agh.databases.health_system.domain.Patient;
 import pl.agh.databases.health_system.domain.Visit;
+import pl.agh.databases.health_system.domain.WorkDaySchedule;
 import pl.agh.databases.health_system.dto.VisitDTO;
 import pl.agh.databases.health_system.dto.request.CreateVisitRequest;
 import pl.agh.databases.health_system.exceptions.ResourceNotFoundException;
-import pl.agh.databases.health_system.exceptions.VisitDateTakenException;
+import pl.agh.databases.health_system.exceptions.UnavailableVisitDateException;
 import pl.agh.databases.health_system.mapper.VisitMapper;
 import pl.agh.databases.health_system.repository.DoctorRepository;
 import pl.agh.databases.health_system.repository.PatientRepository;
 import pl.agh.databases.health_system.repository.VisitRepository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -23,6 +27,8 @@ public class VisitService {
     private final VisitRepository visitRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+
+    private final static int VISIT_DURATION = 20;
 
     public List<VisitDTO> getVisitsByPatientId(Long patientId) {
         // Check if patient exists
@@ -50,19 +56,35 @@ public class VisitService {
     public VisitDTO createVisit(CreateVisitRequest request) {
         Long patientId = request.getPatientId();
         Long doctorId = request.getDoctorId();
-        LocalDate date = request.getDate();
+        LocalDateTime date = request.getDate();
 
-        patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
-        doctorRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
-        if (!visitRepository.isVisitDateFree(doctorId, date)){
-            throw new VisitDateTakenException(doctorId, date);
+        List<WorkDaySchedule> workDaySchedules = doctor.getSchedules();
+
+        WorkDaySchedule workDaySchedule = workDaySchedules
+                .stream()
+                .filter((schedule) -> schedule.getDayOfWeek().equals(date.getDayOfWeek()))
+                .findFirst()
+                .orElseThrow(() -> new UnavailableVisitDateException(doctorId, date));
+
+        LocalTime visitStartTime = date.toLocalTime();
+        LocalTime visitEndTime = visitStartTime.plusMinutes(20);
+
+        if (visitStartTime.isBefore(workDaySchedule.getStartTime()) ||
+                visitEndTime.isAfter(workDaySchedule.getEndTime())) {
+            throw new UnavailableVisitDateException(doctorId, date);
+        }
+
+        if(visitRepository.areVisitsColliding(doctorId, date, VISIT_DURATION)) {
+            throw new UnavailableVisitDateException(doctorId, date);
         }
 
         Visit visit = VisitMapper.toEntity(request);
-        visitRepository.save(visit);
+        patient.getVisits().add(visit);
+        patientRepository.save(patient);
 
         return VisitMapper.mapToDTO(visit);
     }
-
 }

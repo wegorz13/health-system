@@ -2,8 +2,9 @@ package pl.agh.databases.health_system.dto;
 
 import lombok.*;
 
-import java.util.List;
+import java.time.DayOfWeek;
 import java.util.Map;
+
 
 @Setter
 @Getter
@@ -14,6 +15,5 @@ public class DoctorDTO {
     private Long id;
     private String fullName;
     private String specialty;
-    private List<HospitalWithHoursDTO> workingHours;
-
+    private Map<DayOfWeek, WorkDayScheduleDTO> workDaySchedule;
 }

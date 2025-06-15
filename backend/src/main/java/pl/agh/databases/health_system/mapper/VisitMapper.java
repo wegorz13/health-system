@@ -13,8 +13,6 @@ public class VisitMapper {
         return VisitDTO.builder()
                 .id(visit.getId())
                 .date(visit.getDate())
-                .cost(visit.getCost())
-                .prescriptions(visit.getPrescriptions())
                 .patientsCondition(visit.getPatientsCondition())
                 .build();
     }
@@ -22,8 +20,6 @@ public class VisitMapper {
     public static Visit toEntity(CreateVisitRequest request) {
         Visit visit = new Visit();
         visit.setDate(request.getDate());
-        visit.setCost(request.getCost());
-        visit.setPrescriptions(request.getPrescriptions());
         visit.setPatientsCondition(request.getPatientsCondition());
 
         return visit;

@@ -5,7 +5,8 @@ import org.springframework.data.neo4j.repository.query.Query;
 import pl.agh.databases.health_system.domain.Visit;
 import pl.agh.databases.health_system.dto.VisitDTO;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VisitRepository extends Neo4jRepository<Visit, Long> {
@@ -19,13 +20,13 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     RETURN 
       v.id AS id,
       v.date AS date,
-      v.cost AS cost,
       v.prescriptions AS prescriptions,
       v.patientsCondition AS patientsCondition,
       d.firstName + ' ' + d.lastName AS doctorFullName,
       h.address AS address
     """)
     List<VisitDTO> findByPatientId(Long patientId);
+
     @Query("""
     MATCH (d:Doctor)
     WHERE id(d)=$doctorId
@@ -36,7 +37,6 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     RETURN 
       v.id AS id,
       v.date AS date,
-      v.cost AS cost,
       v.prescriptions AS prescriptions,
       v.patientsCondition AS patientsCondition,
       p.firstName + ' ' + p.lastName AS patientFullName,
@@ -44,6 +44,16 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     """)
     List<VisitDTO> findByDoctorId(Long doctorId);
 
-    //TODO
-    boolean isVisitDateFree(Long doctorId, LocalDate date);
+    @Query("""
+    RETURN EXISTS{
+    MATCH (d:Doctor)
+    WHERE id(d)=$doctorId
+    MATCH
+      (d)<-[:CONDUCTED_BY]-(v:Visit)
+    WHERE date(v.date).year = date($date).year AND
+          date(v.date).month = date($date).month AND
+          date(v.date).day = date($date).day AND
+          abs(duration.between(v.date, $date).minutes) <= $visitDuration}
+    """)
+    boolean areVisitsColliding(Long doctorId, LocalDateTime date, int visitDuration);
 }

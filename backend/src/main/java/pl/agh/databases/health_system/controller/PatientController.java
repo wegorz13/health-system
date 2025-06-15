@@ -40,13 +40,25 @@ public class PatientController {
     }
 
     @GetMapping("/relatives/recommended/{id}")
-    public ResponseEntity<List<DoctorDTO>> getPatientRelativesRecommendedDoctors(@PathVariable("id") Long patientId, @RequestParam int depth){
-        return new ResponseEntity<>(patientService.getPatientRelativesRecommendedDoctors(patientId, depth), HttpStatus.OK);
+    public ResponseEntity<List<DoctorDTO>> getDoctorsRecommendedByPatientRelatives(@PathVariable("id") Long patientId, @RequestParam int depth){
+        return new ResponseEntity<>(patientService.getDoctorsRecommendedByPatientRelatives(patientId, depth), HttpStatus.OK);
     }
 
-    @PostMapping("/relatives/add/{id}")
+    @PostMapping("/relatives/{id}")
     public ResponseEntity<Void> addRelative(@PathVariable ("id") Long patientId, @RequestParam() Long relativeId){
         patientService.addRelative(patientId, relativeId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/relatives/{id}")
+    public ResponseEntity<Void> deleteRelative(@PathVariable ("id") Long patientId, @RequestParam() Long relativeId){
+        patientService.deleteRelative(patientId, relativeId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/recommended/{id}")
+    public ResponseEntity<Void> recommendDoctorVisit(@PathVariable("id") Long patientId, @RequestParam Long visitId){
+        patientService.recommendDoctorVisit(patientId, visitId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

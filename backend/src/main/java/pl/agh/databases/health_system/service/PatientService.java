@@ -4,10 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.agh.databases.health_system.domain.Visit;
 import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.PatientDTO;
 import pl.agh.databases.health_system.dto.VisitDTO;
 import pl.agh.databases.health_system.dto.response.PatientResponse;
+import pl.agh.databases.health_system.exceptions.PatientAlreadyRecommendsVisitException;
 import pl.agh.databases.health_system.exceptions.PatientAlreadyRelativeException;
 import pl.agh.databases.health_system.exceptions.ResourceNotFoundException;
 import pl.agh.databases.health_system.mapper.DoctorMapper;
@@ -52,15 +54,14 @@ public class PatientService {
         return visitRepository.findByPatientId(patientId);
     }
 
-    public List<DoctorDTO> getPatientRelativesRecommendedDoctors(Long patientId, int depth) {
+    public List<DoctorDTO> getDoctorsRecommendedByPatientRelatives(Long patientId, int depth) {
         List<Long> relativeIds = patientRepository.findNthRelativesIdsByPatientId(patientId, depth);
 
         return doctorRepository.findDoctorsRecommendedByPatientIds(relativeIds).stream().map(DoctorMapper::toDTO).toList();
     }
 
     public void addRelative(Long patientId, Long relativeId) {
-        patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
-        patientRepository.findById(relativeId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+        verifyPatientAndRelativeExistOrThrow(patientId, relativeId);
 
         if (patientRepository.verifyIsRelative(patientId, relativeId)){
             throw new PatientAlreadyRelativeException(patientId, relativeId);
@@ -69,4 +70,28 @@ public class PatientService {
         patientRepository.addRelativeToPatient(patientId, relativeId);
     }
 
+    public void deleteRelative(Long patientId, Long relativeId) {
+        verifyPatientAndRelativeExistOrThrow(patientId, relativeId);
+
+        patientRepository.deleteRelative(patientId, relativeId);
+    }
+
+    public void recommendDoctorVisit(Long patientId, Long visitId) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+
+        Visit visit = patient.getVisits().stream().filter((v) -> v.getId().equals(visitId)).findFirst().orElseThrow(() -> new ResourceNotFoundException("Visit not found"));
+
+        if (visit.isRecommends()){
+            throw new PatientAlreadyRecommendsVisitException(patientId, visitId);
+        }
+        visit.setRecommends(true);
+
+        visitRepository.save(visit);
+        patientRepository.save(patient);
+    }
+
+    private void verifyPatientAndRelativeExistOrThrow(Long patientId, Long relativeId) {
+        patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+        patientRepository.findById(relativeId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+    }
 }

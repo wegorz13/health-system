@@ -6,10 +6,9 @@ import lombok.Setter;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Node
 @Getter
@@ -18,8 +17,13 @@ import java.util.List;
 public class Visit {
     @Id @GeneratedValue
     private Long id;
-    private LocalDate date;
-    private double cost;
-    private List<String> prescriptions; //should be separate type
+    private LocalDateTime date;
     private String patientsCondition;
+    private boolean recommends;
+
+    @Relationship(type = "CONDUCTED_BY")
+    private Doctor doctor;
+
+    @Relationship(type = "TOOK_PLACE_IN")
+    private Hospital hospital;
 }

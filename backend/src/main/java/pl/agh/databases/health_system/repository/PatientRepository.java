@@ -26,6 +26,12 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
     boolean verifyIsRelative(Long patientId, Long relativeId);
 
     @Query("""
+        MATCH (patient:Patient {id: $patientId}) -[r:IS_RELATED]- (relative:Patient {id: $relativeId}) 
+        DELETE r
+    """)
+    void deleteRelative(Long patientId, Long relativeId);
+
+    @Query("""
         MATCH (patient:Patient {id: $patientId}), (relative:Patient {id: $relativeId}) 
         CREATE (patient)-[:IS_RELATED]->(relative)
     """)

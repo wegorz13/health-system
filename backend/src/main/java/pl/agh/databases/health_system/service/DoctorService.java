@@ -4,15 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.agh.databases.health_system.domain.Doctor;
 import pl.agh.databases.health_system.dto.DoctorDTO;
-import pl.agh.databases.health_system.dto.HospitalDTO;
-import pl.agh.databases.health_system.dto.HospitalWithHoursDTO;
+import pl.agh.databases.health_system.dto.WorkDayScheduleDTO;
+import pl.agh.databases.health_system.exceptions.ResourceNotFoundException;
 import pl.agh.databases.health_system.mapper.DoctorMapper;
 import pl.agh.databases.health_system.repository.DoctorRepository;
 
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,15 +37,12 @@ public class DoctorService {
 
 
     public DoctorDTO getDoctorDetails(Long id) {
-        List<HospitalWithHoursDTO> workingHours = doctorRepository.findDoctorDetails(id);
-        Doctor doctor = doctorRepository.findById(id).orElse(null);
-
-        if (doctor == null){
-            throw new RuntimeException("Doctor not found"); //TODO
-        }
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor with id: " + id + " not found"));
 
         DoctorDTO doctorDTO = DoctorMapper.toDTO(doctor);
-        doctorDTO.setWorkingHours(workingHours);
+        Map<DayOfWeek, WorkDayScheduleDTO> workSchedule = DoctorMapper.doctorScheduleToWorkDayScheduleDTO(doctor.getSchedules());
+        doctorDTO.setWorkDaySchedule(workSchedule);
 
         return doctorDTO;
     }
