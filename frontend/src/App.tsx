@@ -9,9 +9,7 @@ import { useDoctor } from "../hooks";
  */
 export default function DoctorPage() {
     const { id } = useParams<{ id: string }>();
-    const { data: doctor, loading, error } = useDoctor(id);
-    
-    return (
+    const { data: doctor, loading, error } = useDoctor(id);    return (
         <>
             {loading ? (
                 <Typography>Loading...</Typography>

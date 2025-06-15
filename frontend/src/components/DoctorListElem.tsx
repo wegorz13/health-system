@@ -1,27 +1,18 @@
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import type {Doctor} from "../types/doctor.ts";
-import {Paper} from "@mui/material";
-import Typography from "@mui/material/Typography";
+import { Box, Paper, Typography, Stack } from "@mui/material";
+import type { Doctor } from "../types/doctor";
 
-export default function doctorListElem(props:{doctor: Doctor}) {
-    const {doctor} = props;
-
+export default function DoctorListElem({ doctor }: { doctor: Doctor }) {
     return (
         <Box sx={{ flexGrow: 1, p: 2 }}>
             <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
-                <Grid container spacing={2}>
-                    <Grid size={{xs:12}}>
-                        <Typography variant="h5" fontWeight="bold">
-                            {doctor.fullName}
-                        </Typography>
-                    </Grid>
-                    <Grid size={{xs:12, sm:6, md:4}}>
-                        <Typography variant="subtitle1" color="text.secondary">
-                            Specialty: {doctor.specialty}
-                        </Typography>
-                    </Grid>
-                </Grid>
+                <Stack spacing={1}>
+                    <Typography variant="h5" fontWeight="bold">
+                        {doctor.fullName}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                        Specialty: {doctor.specialty}
+                    </Typography>
+                </Stack>
             </Paper>
         </Box>
     );
