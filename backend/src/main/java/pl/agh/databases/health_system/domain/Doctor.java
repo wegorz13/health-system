@@ -19,7 +19,6 @@ public class Doctor {
     private Long id;
     private String firstName;
     private String lastName;
-    private double salary;
     private String specialty;
 
     @Relationship(type = "WORKS_AT", direction = Relationship.Direction.OUTGOING)

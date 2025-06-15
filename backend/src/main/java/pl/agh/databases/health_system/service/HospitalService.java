@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import pl.agh.databases.health_system.domain.Doctor;
 import pl.agh.databases.health_system.domain.Hospital;
 import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.HospitalDTO;
+import pl.agh.databases.health_system.dto.request.CreateHospitalRequest;
 import pl.agh.databases.health_system.mapper.HospitalMapper;
 import pl.agh.databases.health_system.repository.HospitalRepository;
 
@@ -18,6 +18,12 @@ import java.util.List;
 public class HospitalService {
     private final HospitalRepository hospitalRepository;
     private final DoctorService doctorService;
+
+    public void createHospital(CreateHospitalRequest request) {
+        Hospital hospital = HospitalMapper.toEntity(request);
+
+        hospitalRepository.save(hospital);
+    }
 
     public List<HospitalDTO> getAllHospitalsWithDoctors() {
         return hospitalRepository.findAll().stream()

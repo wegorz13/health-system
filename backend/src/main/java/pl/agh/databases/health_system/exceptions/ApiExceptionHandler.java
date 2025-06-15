@@ -25,6 +25,11 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(ScheduleAlreadyAssignedException.class)
+    public ResponseEntity<String> handleScheduleAlreadyAssignedException(ScheduleAlreadyAssignedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(UnavailableVisitDateException.class)
     public ResponseEntity<String> handleVisitDateTaken(UnavailableVisitDateException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);

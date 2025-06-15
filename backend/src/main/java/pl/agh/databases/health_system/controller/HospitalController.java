@@ -2,11 +2,9 @@ package pl.agh.databases.health_system.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.agh.databases.health_system.dto.HospitalDTO;
+import pl.agh.databases.health_system.dto.request.CreateHospitalRequest;
 import pl.agh.databases.health_system.service.HospitalService;
 
 import java.util.List;
@@ -16,6 +14,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HospitalController {
     private final HospitalService hospitalService;
+
+    @PostMapping
+    public ResponseEntity<Void> createHospital(@RequestBody CreateHospitalRequest request) {
+        hospitalService.createHospital(request);
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/")
     public ResponseEntity<List<HospitalDTO>> hospitalIndex(){

@@ -3,11 +3,10 @@ package pl.agh.databases.health_system.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.agh.databases.health_system.dto.DoctorDTO;
+import pl.agh.databases.health_system.dto.request.CreateDoctorRequest;
+import pl.agh.databases.health_system.dto.request.CreateWorkDayScheduleRequest;
 import pl.agh.databases.health_system.service.DoctorService;
 
 import java.util.List;
@@ -21,6 +20,20 @@ public class DoctorController {
     @GetMapping("/")
     public ResponseEntity<List<DoctorDTO>> getAllDoctors() {
         return new ResponseEntity<>( doctorService.getAllDoctors(), HttpStatus.OK);
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<Void> createDoctor(@RequestBody CreateDoctorRequest request) {
+        doctorService.createDoctor(request);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Void> addDoctorWorkDaySchedule(@PathVariable("id") Long doctorId, @RequestBody CreateWorkDayScheduleRequest request){
+        doctorService.addDoctorWorkDaySchedule(request, doctorId);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/patient/{id}")
