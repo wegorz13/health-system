@@ -3,7 +3,6 @@ package pl.agh.databases.health_system.repository;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import pl.agh.databases.health_system.domain.Visit;
-import pl.agh.databases.health_system.dto.VisitDTO;
 
 
 import java.time.LocalDateTime;
@@ -11,38 +10,31 @@ import java.util.List;
 
 public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     @Query("""
-    MATCH (p:Patient )
-    WHERE id(p)=$patientId
-    MATCH
-      (p)<-[:BELONGS_TO_PATIENT]-(v:Visit)
-      <-[:CONDUCTED_BY]-(d:Doctor),
-          (v)-[:TOOK_PLACE_IN]->(h:Hospital)
-    RETURN 
-      v.id AS id,
-      v.date AS date,
-      v.prescriptions AS prescriptions,
-      v.patientsCondition AS patientsCondition,
-      d.firstName + ' ' + d.lastName AS doctorFullName,
-      h.address AS address
-    """)
-    List<VisitDTO> findByPatientId(Long patientId);
+    MATCH (p:Patient)
+    WHERE id(p) = $patientId
+    MATCH (p)-[:HAS_VISIT]->(v:Visit)
+    MATCH (v)<-[:CONDUCTED_BY]-(d:Doctor)
+    OPTIONAL MATCH (v)-[:TOOK_PLACE_IN]->(h:Hospital)
+    RETURN v, d, h
+""")
+    List<Visit> findByPatientId(Long patientId);
 
     @Query("""
     MATCH (d:Doctor)
-    WHERE id(d)=$doctorId
-    MATCH
-      (d)<-[:CONDUCTED_BY]-(v:Visit)
-      -[:BELONGS_TO_PATIENT]->(p:Patient),
-          (v)-[:TOOK_PLACE_IN]->(h:Hospital)
-    RETURN 
-      v.id AS id,
-      v.date AS date,
-      v.prescriptions AS prescriptions,
-      v.patientsCondition AS patientsCondition,
-      p.firstName + ' ' + p.lastName AS patientFullName,
-      h.address AS address
+    WHERE id(d) = $doctorId
+    MATCH (v:Visit)-[:CONDUCTED_BY]->(d)
+    OPTIONAL MATCH (v)-[:TOOK_PLACE_IN]->(h:Hospital)
+    RETURN v, d, h
     """)
-    List<VisitDTO> findByDoctorId(Long doctorId);
+    List<Visit> findByDoctorId(Long doctorId);
+
+    @Query("""
+    MATCH (v:Visit)-[:TOOK_PLACE_IN]->(h:Hospital)
+    WHERE id(h) = $hospitalId
+    OPTIONAL MATCH (v)<-[:CONDUCTED_BY]-(d:Doctor)
+    RETURN v, d, h
+""")
+    List<Visit> findByHospitalId(Long hospitalId);
 
     @Query("""
     RETURN EXISTS{

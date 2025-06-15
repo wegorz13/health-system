@@ -21,6 +21,6 @@ public class Doctor {
     private String lastName;
     private String specialty;
 
-    @Relationship(type = "WORKS_AT", direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "WORKS_AT")
     private List<WorkDaySchedule> schedules;
 }

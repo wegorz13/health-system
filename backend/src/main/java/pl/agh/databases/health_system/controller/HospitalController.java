@@ -21,6 +21,13 @@ public class HospitalController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteHospital(@PathVariable("id") Long hospitalId) {
+        hospitalService.deleteHospital(hospitalId);
+
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/")
     public ResponseEntity<List<HospitalDTO>> hospitalIndex(){
         return ResponseEntity.ok(hospitalService.getAllHospitalsWithDoctors());

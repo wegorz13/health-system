@@ -29,6 +29,13 @@ public class DoctorController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDoctor(@PathVariable("id") Long doctorId) {
+        doctorService.deleteDoctor(doctorId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/{id}")
     public ResponseEntity<Void> addDoctorWorkDaySchedule(@PathVariable("id") Long doctorId, @RequestBody CreateWorkDayScheduleRequest request){
         doctorService.addDoctorWorkDaySchedule(request, doctorId);

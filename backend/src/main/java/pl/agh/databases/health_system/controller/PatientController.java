@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.agh.databases.health_system.domain.Visit;
 import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.PatientDTO;
-import pl.agh.databases.health_system.dto.VisitDTO;
 import pl.agh.databases.health_system.dto.request.CreatePatientRequest;
 import pl.agh.databases.health_system.dto.response.PatientResponse;
 import pl.agh.databases.health_system.service.PatientService;
@@ -29,13 +29,21 @@ public class PatientController {
     public ResponseEntity<PatientResponse> registerPatient(@RequestBody CreatePatientRequest request) {
         return ResponseEntity.ok(patientService.createPatient(request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePatient(@PathVariable("id") Long patientId) {
+        patientService.deletePatient(patientId);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/relatives/{id}")
     public ResponseEntity<List<PatientDTO>> getRelatives(@PathVariable("id") Long id){
         return new ResponseEntity<>(patientService.getRelatives(id), HttpStatus.OK);
     }
 
     @GetMapping("/visits/{id}")
-    public ResponseEntity<List<VisitDTO>> getPatientVisits(@PathVariable("id") Long patientId){
+    public ResponseEntity<List<Visit>> getPatientVisits(@PathVariable("id") Long patientId){
         return new ResponseEntity<>(patientService.getPatientVisits(patientId), HttpStatus.OK);
     }
 

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import pl.agh.databases.health_system.domain.Visit;
 import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.PatientDTO;
-import pl.agh.databases.health_system.dto.VisitDTO;
 import pl.agh.databases.health_system.dto.response.PatientResponse;
 import pl.agh.databases.health_system.exceptions.PatientAlreadyRecommendsVisitException;
 import pl.agh.databases.health_system.exceptions.PatientAlreadyRelativeException;
@@ -38,6 +37,14 @@ public class PatientService {
         Patient savedPatient = patientRepository.save(patient);
         return PatientMapper.toResponse(savedPatient);
     }
+
+    public void deletePatient(Long patientId) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+
+        visitRepository.deleteAll(patient.getVisits());
+        patientRepository.delete(patient);
+    }
+
     public List<PatientDTO> getRelatives(Long id) {
         List<Patient> relatives = patientRepository.findRelativesById(id);
 
@@ -50,7 +57,7 @@ public class PatientService {
         })).toList();
     }
 
-    public List<VisitDTO> getPatientVisits(Long patientId) {
+    public List<Visit> getPatientVisits(Long patientId) {
         return visitRepository.findByPatientId(patientId);
     }
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.agh.databases.health_system.domain.Doctor;
 import pl.agh.databases.health_system.domain.Hospital;
+import pl.agh.databases.health_system.domain.Visit;
 import pl.agh.databases.health_system.domain.WorkDaySchedule;
 import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.WorkDayScheduleDTO;
@@ -14,8 +15,11 @@ import pl.agh.databases.health_system.exceptions.ScheduleAlreadyAssignedExceptio
 import pl.agh.databases.health_system.mapper.DoctorMapper;
 import pl.agh.databases.health_system.repository.DoctorRepository;
 import pl.agh.databases.health_system.repository.HospitalRepository;
+import pl.agh.databases.health_system.repository.VisitRepository;
+import pl.agh.databases.health_system.repository.WorkDayScheduleRepository;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -24,10 +28,28 @@ import java.util.Map;
 public class DoctorService {
     private final DoctorRepository doctorRepository;
     private final HospitalRepository hospitalRepository;
+    private final WorkDayScheduleRepository workDayScheduleRepository;
+    private final VisitRepository visitRepository;
 
     public void createDoctor(CreateDoctorRequest request) {
         Doctor doctor = DoctorMapper.toEntity(request);
         doctorRepository.save(doctor);
+    }
+
+    public void deleteDoctor(Long doctorId) {
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
+        List<WorkDaySchedule> schedules = doctor.getSchedules();
+
+        List<Visit> visits = visitRepository.findByDoctorId(doctorId);
+        visits.forEach(visit -> {
+            if (visit.getDate().isAfter(LocalDateTime.now())){
+                visitRepository.delete(visit);
+            }
+        });
+
+        workDayScheduleRepository.deleteAll(schedules);
+        doctorRepository.deleteById(doctorId);
     }
 
     public void addDoctorWorkDaySchedule(CreateWorkDayScheduleRequest request, Long doctorId) {

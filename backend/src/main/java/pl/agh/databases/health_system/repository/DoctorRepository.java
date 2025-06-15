@@ -15,6 +15,4 @@ public interface DoctorRepository extends Neo4jRepository<Doctor, Long> {
 
     @Query("MATCH (d:Doctor) <- [r:VISITS] - (p:Patient) WHERE p IN $patientIds AND r.recommended=true RETURN DISTINCT d ")
     List<Doctor> findDoctorsRecommendedByPatientIds(List<Long> patientIds);
-
-
 }

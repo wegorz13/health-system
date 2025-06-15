@@ -18,6 +18,6 @@ public class WorkDaySchedule {
     private LocalTime startTime;
     private LocalTime endTime;
 
-    @Relationship(type = "IN_HOSPITAL", direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "IN_HOSPITAL")
     private Hospital hospital;
 }

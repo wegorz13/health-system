@@ -8,7 +8,6 @@ import pl.agh.databases.health_system.domain.Doctor;
 import pl.agh.databases.health_system.domain.Patient;
 import pl.agh.databases.health_system.domain.Visit;
 import pl.agh.databases.health_system.domain.WorkDaySchedule;
-import pl.agh.databases.health_system.dto.VisitDTO;
 import pl.agh.databases.health_system.dto.request.CreateVisitRequest;
 import pl.agh.databases.health_system.exceptions.ResourceNotFoundException;
 import pl.agh.databases.health_system.exceptions.UnavailableVisitDateException;
@@ -30,30 +29,26 @@ public class VisitService {
 
     private final static int VISIT_DURATION = 20;
 
-    public List<VisitDTO> getVisitsByPatientId(Long patientId) {
-        // Check if patient exists
+    public List<Visit> getVisitsByPatientId(Long patientId) {
         patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404)));
 
         return visitRepository.findByPatientId(patientId);
     }
 
-    public List<VisitDTO> getVisitsByDoctorId(Long doctorId) {
-        // Check if doctor exists
+    public List<Visit> getVisitsByDoctorId(Long doctorId) {
         doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404)));
 
         return visitRepository.findByDoctorId(doctorId);
     }
 
-    public VisitDTO getVisitDetails(Long id) {
-        Visit visit = visitRepository.findById(id)
+    public Visit getVisitDetails(Long id) {
+        return visitRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404)));
-
-        return VisitMapper.mapToDTO(visit);
     }
 
-    public VisitDTO createVisit(CreateVisitRequest request) {
+    public void createVisit(CreateVisitRequest request) {
         Long patientId = request.getPatientId();
         Long doctorId = request.getDoctorId();
         LocalDateTime date = request.getDate();
@@ -84,7 +79,5 @@ public class VisitService {
         Visit visit = VisitMapper.toEntity(request);
         patient.getVisits().add(visit);
         patientRepository.save(patient);
-
-        return VisitMapper.mapToDTO(visit);
     }
 }
