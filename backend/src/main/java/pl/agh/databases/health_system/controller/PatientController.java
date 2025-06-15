@@ -42,15 +42,10 @@ public class PatientController {
         return new ResponseEntity<>(patientService.getRelatives(id), HttpStatus.OK);
     }
 
-    @GetMapping("/visits/{id}")
-    public ResponseEntity<List<Visit>> getPatientVisits(@PathVariable("id") Long patientId){
-        return new ResponseEntity<>(patientService.getPatientVisits(patientId), HttpStatus.OK);
-    }
-
-    @GetMapping("/relatives/recommended/{id}")
-    public ResponseEntity<List<DoctorDTO>> getDoctorsRecommendedByPatientRelatives(@PathVariable("id") Long patientId, @RequestParam int depth){
-        return new ResponseEntity<>(patientService.getDoctorsRecommendedByPatientRelatives(patientId, depth), HttpStatus.OK);
-    }
+//    @GetMapping("/visits/{id}")
+//    public ResponseEntity<List<Visit>> getPatientVisits(@PathVariable("id") Long patientId){
+//        return new ResponseEntity<>(patientService.getPatientVisits(patientId), HttpStatus.OK);
+//    }
 
     @PostMapping("/relatives/{id}")
     public ResponseEntity<Void> addRelative(@PathVariable ("id") Long patientId, @RequestParam() Long relativeId){

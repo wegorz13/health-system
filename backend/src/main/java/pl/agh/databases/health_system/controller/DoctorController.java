@@ -57,4 +57,13 @@ public class DoctorController {
     public ResponseEntity<DoctorDTO> getDoctorDetails(@PathVariable("id") Long id) {
         return new ResponseEntity<>(doctorService.getDoctorDetails(id), HttpStatus.OK);
     }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<DoctorDTO>> getBestRecommendedDoctors() {
+        return new ResponseEntity<>(doctorService.getBestRecommendedDoctors(), HttpStatus.OK);
+    }
+    @GetMapping("/recommendations/{id}")
+    public ResponseEntity<List<DoctorDTO>> getRelativeBasedRecommendedDoctors(@PathVariable("id") Long patientId) {
+        return new ResponseEntity<>(doctorService.getRelativeBasedRecommendedDoctors(patientId), HttpStatus.OK);
+    }
 }

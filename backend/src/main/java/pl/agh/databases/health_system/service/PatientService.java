@@ -57,9 +57,14 @@ public class PatientService {
         })).toList();
     }
 
-    public List<Visit> getPatientVisits(Long patientId) {
-        return visitRepository.findByPatientId(patientId);
-    }
+//    public List<Visit> getPatientVisits(Long patientId) {
+//        return visitRepository.findByPatientId(patientId);
+//    }
+
+
+     List<Long> findNthRelativesIdsByPatientId(Long patientId,int depth){
+        return patientRepository.findNthRelativesIdsByPatientId(patientId,depth);
+     }
 
     public List<DoctorDTO> getDoctorsRecommendedByPatientRelatives(Long patientId, int depth) {
         List<Long> relativeIds = patientRepository.findNthRelativesIdsByPatientId(patientId, depth);
