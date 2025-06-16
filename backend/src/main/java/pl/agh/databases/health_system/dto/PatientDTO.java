@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class PatientDTO {
+    private Long id;
     private String firstName;
     private String lastName;
     private String username;

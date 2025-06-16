@@ -2,8 +2,8 @@ package pl.agh.databases.health_system.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import pl.agh.databases.health_system.dto.PatientDTO;
 import pl.agh.databases.health_system.dto.request.CreatePatientRequest;
-import pl.agh.databases.health_system.dto.response.PatientResponse;
 import pl.agh.databases.health_system.domain.Patient;
 
 @Component
@@ -22,8 +22,9 @@ public class PatientMapper {
 
     }
 
-    public static PatientResponse toResponse(Patient patient) {
-        return PatientResponse.builder()
+    public static PatientDTO toResponse(Patient patient) {
+        return PatientDTO.builder()
+                .id(patient.getId())
                 .firstName(patient.getFirstName())
                 .lastName(patient.getLastName())
                 .username(patient.getUsername())

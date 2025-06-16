@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import pl.agh.databases.health_system.domain.Visit;
 import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.PatientDTO;
-import pl.agh.databases.health_system.dto.response.PatientResponse;
 import pl.agh.databases.health_system.exceptions.PatientAlreadyRecommendsVisitException;
 import pl.agh.databases.health_system.exceptions.PatientAlreadyRelativeException;
 import pl.agh.databases.health_system.exceptions.ResourceNotFoundException;
@@ -30,7 +29,7 @@ public class PatientService {
     private final DoctorRepository doctorRepository;
 
     @Transactional
-    public PatientResponse createPatient(CreatePatientRequest request) {
+    public PatientDTO createPatient(CreatePatientRequest request) {
         Patient patient = PatientMapper.toEntity(request);
         patient.setPassword(passwordEncoder.encode(request.getPassword()));
 

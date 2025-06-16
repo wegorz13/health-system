@@ -4,11 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.agh.databases.health_system.domain.Visit;
-import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.PatientDTO;
 import pl.agh.databases.health_system.dto.request.CreatePatientRequest;
-import pl.agh.databases.health_system.dto.response.PatientResponse;
 import pl.agh.databases.health_system.service.PatientService;
 
 import java.security.Principal;
@@ -26,7 +23,7 @@ public class PatientController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<PatientResponse> registerPatient(@RequestBody CreatePatientRequest request) {
+    public ResponseEntity<PatientDTO> registerPatient(@RequestBody CreatePatientRequest request) {
         return ResponseEntity.ok(patientService.createPatient(request));
     }
 
