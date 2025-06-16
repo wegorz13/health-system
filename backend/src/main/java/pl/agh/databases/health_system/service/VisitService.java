@@ -4,15 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import pl.agh.databases.health_system.domain.Doctor;
-import pl.agh.databases.health_system.domain.Patient;
-import pl.agh.databases.health_system.domain.Visit;
-import pl.agh.databases.health_system.domain.WorkDaySchedule;
+import pl.agh.databases.health_system.domain.*;
 import pl.agh.databases.health_system.dto.request.CreateVisitRequest;
 import pl.agh.databases.health_system.exceptions.ResourceNotFoundException;
 import pl.agh.databases.health_system.exceptions.UnavailableVisitDateException;
 import pl.agh.databases.health_system.mapper.VisitMapper;
 import pl.agh.databases.health_system.repository.DoctorRepository;
+import pl.agh.databases.health_system.repository.HospitalRepository;
 import pl.agh.databases.health_system.repository.PatientRepository;
 import pl.agh.databases.health_system.repository.VisitRepository;
 
@@ -28,6 +26,7 @@ public class VisitService {
     private final PatientRepository patientRepository;
 
     private final static int VISIT_DURATION = 20;
+    private final HospitalRepository hospitalRepository;
 
     public List<Visit> getVisitsByPatientId(Long patientId) {
         patientRepository.findById(patientId)
@@ -51,10 +50,12 @@ public class VisitService {
     public void createVisit(CreateVisitRequest request) {
         Long patientId = request.getPatientId();
         Long doctorId = request.getDoctorId();
+        Long hospitalId = request.getHospitalId();
         LocalDateTime date = request.getDate();
 
         Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
         Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+        Hospital hospital = hospitalRepository.findById(hospitalId).orElseThrow(() -> new ResourceNotFoundException("Hospital not found"));
 
         List<WorkDaySchedule> workDaySchedules = doctor.getSchedules();
 
@@ -77,8 +78,10 @@ public class VisitService {
         }
 
         Visit visit = VisitMapper.toEntity(request);
+        visit.setHospital(hospital);
         patient.getVisits().add(visit);
         doctor.getVisits().add(visit);
+        visitRepository.save(visit);
         patientRepository.save(patient);
         doctorRepository.save(doctor);
     }

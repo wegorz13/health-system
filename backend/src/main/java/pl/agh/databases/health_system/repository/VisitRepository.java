@@ -12,23 +12,23 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     @Query("""
     MATCH (p:Patient {id: $patientId})
     MATCH (p)-[:HAS_VISIT]->(v:Visit)
-    MATCH (v)<-[:CONDUCTED_BY]-(d:Doctor)
-    OPTIONAL MATCH (v)-[:TOOK_PLACE_IN]->(h:Hospital)
+    MATCH (v)-[:CONDUCTED_BY]->(d:Doctor)
+    MATCH (v)-[:TOOK_PLACE_IN]->(h:Hospital)
     RETURN v, d, h
 """)
     List<Visit> findByPatientId(Long patientId);
 
     @Query("""
-    MATCH (d:Doctor {id: $doctorId})
-    MATCH (v:Visit)-[:CONDUCTED_BY]->(d)
-    OPTIONAL MATCH (v)-[:TOOK_PLACE_IN]->(h:Hospital)
-    RETURN v, d, h
-    """)
+        MATCH (d:Doctor)<-[:CONDUCTED_BY]-(v:Visit) - [:TOOK_PLACE_IN]->(h:Hospital) 
+        WHERE id(d) = $doctorId
+        RETURN v, d, h
+        """)
     List<Visit> findByDoctorId(Long doctorId);
+
 
     @Query("""
     MATCH (v:Visit)-[:TOOK_PLACE_IN]->(h:Hospital {id: $hospitalId})
-    OPTIONAL MATCH (v)<-[:CONDUCTED_BY]-(d:Doctor)
+    OPTIONAL MATCH (v)-[:CONDUCTED_BY]->(d:Doctor)
     RETURN v, d, h
 """)
     List<Visit> findByHospitalId(Long hospitalId);

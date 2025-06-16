@@ -8,10 +8,14 @@ import java.util.List;
 
 public interface DoctorRepository extends Neo4jRepository<Doctor, Long> {
     @Query("""
-    MATCH (h:Hospital {id: $hospitalId}) <-[:WORKS_AT]-(docs:Doctor) 
+    MATCH (h:Hospital) <-[:WORKS_AT]-(docs:Doctor) 
+    WHERE id(h) = $hospitalId
     RETURN docs""")
     List<Doctor> findDoctorsByHospitalId(Long hospitalId);
 
-    @Query("MATCH (:Patient {id: $patientId}) <- [:BELONGS_TO_PATIENT] - (:Visit) <- [:CONDUCTED_BY] - (docs:Doctor) RETURN docs")
+    @Query("""
+            MATCH (p:Patient {id: $patientId}) <- [:BELONGS_TO_PATIENT] - (:Visit) <- [:CONDUCTED_BY] - (docs:Doctor) 
+            WHERE id(p) = $patientId
+            RETURN docs""")
     List<Doctor> findDoctorsByPatientId(Long patientId);
 }

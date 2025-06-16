@@ -16,4 +16,5 @@ public class DoctorDTO {
     private String fullName;
     private String specialty;
     private Map<DayOfWeek, WorkDayScheduleDTO> workDaySchedule;
+    private long recommendations;
 }

@@ -21,7 +21,7 @@ public class Visit {
     private String patientsCondition;
     private boolean recommends;
 
-    @Relationship(type = "CONDUCTED_BY", direction = Relationship.Direction.INCOMING)
+    @Relationship(type = "CONDUCTED_BY", direction = Relationship.Direction.OUTGOING)
     private Doctor doctor;
 
     @Relationship(type = "TOOK_PLACE_IN")

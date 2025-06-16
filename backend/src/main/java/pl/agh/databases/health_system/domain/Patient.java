@@ -35,10 +35,12 @@ public class Patient implements UserDetails {
     @Relationship(type = "HAS_VISIT")
     private List<Visit> visits;
 
+    @Relationship(type = "IS_RELATED", direction = Relationship.Direction.OUTGOING)
+    private List<Patient> relatives;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new).toList();
     }
-
 }

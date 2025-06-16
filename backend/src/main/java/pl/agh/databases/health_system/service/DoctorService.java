@@ -1,6 +1,7 @@
 package pl.agh.databases.health_system.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import pl.agh.databases.health_system.domain.*;
 import pl.agh.databases.health_system.dto.DoctorDTO;
@@ -97,36 +98,40 @@ public class DoctorService {
     }
 
     public List<DoctorDTO> getBestRecommendedDoctors() {
-        List<Doctor> doctors = doctorRepository.findAll();
-        Map<Long,Doctor> recommendationMap = new HashMap<>();
+        record DoctorRecommendation(Doctor doctor, long recommendations) {}
 
-        doctors.forEach(doctor -> {
-            Long sumForDoctor = visitRepository.findByDoctorId(doctor.getId()).stream().filter(Visit::isRecommends).count();
-            recommendationMap.put(sumForDoctor, doctor);
-        });
-
-        return recommendationMap.entrySet().stream()
-                .sorted(Map.Entry.<Long, Doctor>comparingByKey().reversed())
-                .map(Map.Entry::getValue)
-                .map(DoctorMapper::toDTO)
+        return doctorRepository.findAll().stream()
+                .map(doctor -> new DoctorRecommendation(
+                        doctor,
+                        visitRepository.findByDoctorId(doctor.getId())
+                                .stream()
+                                .filter(Visit::isRecommends)
+                                .count()
+                ))
+                .sorted((a, b) -> Long.compare(b.recommendations(), a.recommendations()))
+                .map((docRec) -> {
+                    DoctorDTO doctorDTO = DoctorMapper.toDTO(docRec.doctor());
+                    doctorDTO.setRecommendations(docRec.recommendations());
+                    return doctorDTO;
+                })
                 .toList();
     }
 
     public List<DoctorDTO> getRelativeBasedRecommendedDoctors(Long patientId) {
         HashMap<Long,Integer> factorByPatient = new HashMap<>();
 
-        List<Long> relativesFirstDegree = patientService.findNthRelativesIdsByPatientId(patientId,1);
+        List<Long> relativesFirstDegree = patientRepository.find1stRelativesIdsByPatientId(patientId);
 
         relativesFirstDegree.forEach(relativeId->factorByPatient.put(relativeId,1));
 
-        List<Long> relativesSecondDegree = patientService.findNthRelativesIdsByPatientId(patientId,2);
+        List<Long> relativesSecondDegree = patientRepository.find2ndRelativesIdsByPatientId(patientId);
 
         relativesSecondDegree.forEach(relativeId->{
             if(!factorByPatient.containsKey(relativeId))
                 factorByPatient.put(relativeId,2);
         });
 
-        List<Long> relativesThirdDegree = patientService.findNthRelativesIdsByPatientId(patientId,3);
+        List<Long> relativesThirdDegree = patientRepository.find3rdRelativesIdsByPatientId(patientId);
         relativesThirdDegree.forEach(relativeId->{
             if(!factorByPatient.containsKey(relativeId))
                 factorByPatient.put(relativeId,4);

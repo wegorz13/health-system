@@ -39,11 +39,6 @@ public class PatientController {
         return new ResponseEntity<>(patientService.getRelatives(id), HttpStatus.OK);
     }
 
-//    @GetMapping("/visits/{id}")
-//    public ResponseEntity<List<Visit>> getPatientVisits(@PathVariable("id") Long patientId){
-//        return new ResponseEntity<>(patientService.getPatientVisits(patientId), HttpStatus.OK);
-//    }
-
     @PostMapping("/relatives/{id}")
     public ResponseEntity<Void> addRelative(@PathVariable ("id") Long patientId, @RequestParam("relative_id") Long relativeId){
         patientService.addRelative(patientId, relativeId);

@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import pl.agh.databases.health_system.domain.Patient;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface PatientRepository extends Neo4jRepository<Patient, Long> {
@@ -24,26 +25,36 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
     List<Patient> findRelativesById(Long patientId);
 
     @Query("""
-        MATCH (:Patient {id: $patientId}) - [:IS_RELATED*1..$depth] - (relative:Patient) 
-        RETURN DISTINCT relative
+        MATCH (:Patient {id: $patientId}) - [:IS_RELATED*1] - (relative:Patient) 
+        RETURN DISTINCT relative.id
     """)
-    List<Long> findNthRelativesIdsByPatientId(Long patientId, int depth);
+    List<Long> find1stRelativesIdsByPatientId(Long patientId);
 
-    @Query("RETURN EXISTS { MATCH (:Patient {id: $patientId}) -[:IS_RELATED]- (:Patient {id: $relativeId}) }")
+    @Query("""
+        MATCH (:Patient {id: $patientId}) - [:IS_RELATED*2] - (relative:Patient) 
+        RETURN DISTINCT relative.id
+    """)
+    List<Long> find2ndRelativesIdsByPatientId(Long patientId);
+    @Query("""
+        MATCH (:Patient {id: $patientId}) - [:IS_RELATED*3] - (relative:Patient) 
+        RETURN DISTINCT relative.id
+    """)
+    List<Long> find3rdRelativesIdsByPatientId(Long patientId);
+
+    @Query("""
+    RETURN EXISTS { 
+        MATCH (patient:Patient) WHERE elementId(patient) = $patientId
+        MATCH (relative:Patient) WHERE elementId(relative) = $relativeId
+        MATCH (patient)-[:IS_RELATED]-(relative)
+    }
+""")
     boolean verifyIsRelative(Long patientId, Long relativeId);
 
     @Query("""
-        MATCH (patient:Patient {id: $patientId}) -[r:IS_RELATED]- (relative:Patient {id: $relativeId}) 
-        DELETE r
-    """)
-    void deleteRelative(Long patientId, Long relativeId);
-
-    @Query("""
-        MATCH (patient:Patient {id: $patientId})
-        MATCH (relative:Patient {id: $relativeId})
-        CREATE (patient)-[:IS_RELATED]->(relative)
-    """)
-    void addRelativeToPatient(Long patientId, Long relativeId);
+    MATCH (p1:Patient {id: $patientId})-[r:IS_RELATED]-(p2:Patient {id: $relativeId})
+    DELETE r
+""")
+    void deleteRelationBetweenPatients(Long patientId, Long relativeId);
 
     @Query("""
         MATCH (patients:Patient) - [:HAS_VISIT] -> (v:Visit) - [:IS_CONDUCTED_BY] -> (:Doctor {id: $doctorId})

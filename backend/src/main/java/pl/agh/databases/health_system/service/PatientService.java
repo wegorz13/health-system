@@ -52,28 +52,36 @@ public class PatientService {
         })).toList();
     }
 
-
-     List<Long> findNthRelativesIdsByPatientId(Long patientId,int depth){
-        return patientRepository.findNthRelativesIdsByPatientId(patientId,depth);
-     }
-
-
+    @Transactional
     public void addRelative(Long patientId, Long relativeId) {
-        verifyPatientAndRelativeExistOrThrow(patientId, relativeId);
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+        Patient relative = patientRepository.findById(relativeId).orElseThrow(() -> new ResourceNotFoundException("Relative not found"));
 
         if (patientRepository.verifyIsRelative(patientId, relativeId)){
             throw new PatientAlreadyRelativeException(patientId, relativeId);
         }
 
-        patientRepository.addRelativeToPatient(patientId, relativeId);
+        patient.getRelatives().add(relative);
+        relative.getRelatives().add(patient);
+        patientRepository.save(patient);
+        patientRepository.save(relative);
     }
 
+    @Transactional
     public void deleteRelative(Long patientId, Long relativeId) {
-        verifyPatientAndRelativeExistOrThrow(patientId, relativeId);
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+        Patient relative = patientRepository.findById(relativeId).orElseThrow(() -> new ResourceNotFoundException("Relative not found"));
 
-        patientRepository.deleteRelative(patientId, relativeId);
+        patientRepository.deleteRelationBetweenPatients(patientId, relativeId);
+
+        patient.getRelatives().remove(relative);
+        relative.getRelatives().remove(patient);
+        patientRepository.save(patient);
+        patientRepository.save(relative);
+
     }
 
+    @Transactional
     public void recommendDoctorVisit(Long patientId, Long visitId) {
         Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
@@ -86,10 +94,5 @@ public class PatientService {
 
         visitRepository.save(visit);
         patientRepository.save(patient);
-    }
-
-    private void verifyPatientAndRelativeExistOrThrow(Long patientId, Long relativeId) {
-        patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
-        patientRepository.findById(relativeId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
 }

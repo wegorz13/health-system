@@ -15,4 +15,5 @@ public class CreateVisitRequest {
     private String patientsCondition;
     private Long patientId;
     private Long doctorId;
+    private Long hospitalId;
 }
