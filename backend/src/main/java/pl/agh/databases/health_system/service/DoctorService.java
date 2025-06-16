@@ -10,17 +10,12 @@ import pl.agh.databases.health_system.dto.request.CreateWorkDayScheduleRequest;
 import pl.agh.databases.health_system.exceptions.ResourceNotFoundException;
 import pl.agh.databases.health_system.exceptions.ScheduleAlreadyAssignedException;
 import pl.agh.databases.health_system.mapper.DoctorMapper;
-import pl.agh.databases.health_system.repository.DoctorRepository;
-import pl.agh.databases.health_system.repository.HospitalRepository;
-import pl.agh.databases.health_system.repository.VisitRepository;
-import pl.agh.databases.health_system.repository.WorkDayScheduleRepository;
+import pl.agh.databases.health_system.repository.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +25,7 @@ public class DoctorService {
     private final WorkDayScheduleRepository workDayScheduleRepository;
     private final VisitRepository visitRepository;
     private final PatientService patientService;
+    private final PatientRepository patientRepository;
 
     public void createDoctor(CreateDoctorRequest request) {
         Doctor doctor = DoctorMapper.toEntity(request);
@@ -102,61 +98,65 @@ public class DoctorService {
     }
 
     public List<DoctorDTO> getBestRecommendedDoctors() {
+        List<Doctor> doctors = doctorRepository.findAll();
+        Map<Long,Doctor> recommendationMap = new HashMap<>();
+
+        doctors.forEach(doctor -> {
+            Long sumForDoctor = visitRepository.findByDoctorId(doctor.getId()).stream().filter(Visit::isRecommends).count();
+            recommendationMap.put(sumForDoctor, doctor);
+        });
+
+        return recommendationMap.entrySet().stream()
+                .sorted(Map.Entry.<Long, Doctor>comparingByKey().reversed())
+                .map(Map.Entry::getValue)
+                .map(DoctorMapper::toDTO)
+                .toList();
     }
 
     public List<DoctorDTO> getRelativeBasedRecommendedDoctors(Long patientId) {
-
-        // For each patient relative give a weight
         HashMap<Long,Integer> factorByPatient = new HashMap<>();
 
-        // Get 1 degree relatives
         List<Long> relativesFirstDegree = patientService.findNthRelativesIdsByPatientId(patientId,1);
-        // Assign factors to relatives
+
         relativesFirstDegree.forEach(relativeId->factorByPatient.put(relativeId,1));
 
-        // Get 2 degree relatives
         List<Long> relativesSecondDegree = patientService.findNthRelativesIdsByPatientId(patientId,2);
-        // Assign factors to relatives
+
         relativesSecondDegree.forEach(relativeId->{
             if(!factorByPatient.containsKey(relativeId))
                 factorByPatient.put(relativeId,2);
         });
 
-        // Get 3 degree relatives
         List<Long> relativesThirdDegree = patientService.findNthRelativesIdsByPatientId(patientId,3);
-        // Assign factors to relatives
         relativesThirdDegree.forEach(relativeId->{
             if(!factorByPatient.containsKey(relativeId))
                 factorByPatient.put(relativeId,4);
         });
 
-        // Get all doctors
         List<Doctor> doctors = doctorRepository.findAll();
 
-        // Calculate for each doctor sum of factors
-        // The best recommendation is doctor with smallest one
-        Map<Long,Doctor> recommendationMap = new HashMap<>();
+        Map<Double,Doctor> recommendationMap = new HashMap<>();
 
-        // For each doctor gets patients
-        // If patient is relative, adds it's factor
-        doctors.forEach(doctor->{
-            long sumForDoctor = doctor.getPatients().stream()
-                    .filter(patient -> factorByPatient.containsKey(patient.getId()))
-                    .mapToLong(patient -> factorByPatient.get(patient.getId()))
+        doctors.forEach(doctor -> {
+            Double sumForDoctor = patientRepository.findByDoctorId(doctor.getId())
+                    .stream()
+                    .filter(p -> factorByPatient.containsKey(p.getId()))
+                    .flatMap(p -> p.getVisits().stream()
+                            .filter(Visit::isRecommends)
+                            .map(v -> 1.0 / factorByPatient.get(p.getId()))
+                    )
+                    .mapToDouble(Double::doubleValue)
                     .sum();
 
             recommendationMap.put(sumForDoctor, doctor);
 
         });
 
-        // Converts a map into a list of doctors
-        // sorted by the map's keys in ascending order.
+
         return recommendationMap.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
+                .sorted(Map.Entry.<Double, Doctor>comparingByKey().reversed())
                 .map(Map.Entry::getValue)
                 .map(DoctorMapper::toDTO)
                 .toList();
-
-
     }
 }

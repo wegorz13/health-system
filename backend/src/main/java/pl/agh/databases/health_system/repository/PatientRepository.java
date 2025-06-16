@@ -36,4 +36,11 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
         CREATE (patient)-[:IS_RELATED]->(relative)
     """)
     void addRelativeToPatient(Long patientId, Long relativeId);
+
+    @Query("""
+        MATCH (patients:Patient) - [:HAS_VISIT] -> (v:Visit) - [:IS_CONDUCTED_BY] -> (:Doctor {id: $doctorId})
+        RETURN patients, v
+    """)
+    List<Patient> findByDoctorId(Long doctorId);
+
 }
