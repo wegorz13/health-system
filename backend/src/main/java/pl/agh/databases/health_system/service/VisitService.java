@@ -78,6 +78,8 @@ public class VisitService {
 
         Visit visit = VisitMapper.toEntity(request);
         patient.getVisits().add(visit);
+        doctor.getVisits().add(visit);
         patientRepository.save(patient);
+        doctorRepository.save(doctor);
     }
 }

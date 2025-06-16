@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
@@ -13,8 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateVisitRequest {
     private LocalDateTime date;
-    private double cost;
-    private List<String> prescriptions;
     private String patientsCondition;
     private Long patientId;
     private Long doctorId;

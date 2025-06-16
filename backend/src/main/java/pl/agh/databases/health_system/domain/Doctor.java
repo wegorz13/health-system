@@ -23,4 +23,7 @@ public class Doctor {
 
     @Relationship(type = "WORKS_AT")
     private List<WorkDaySchedule> schedules;
+
+    @Relationship(type = "IS_CONDUCTED_BY")
+    private List<Visit> visits;
 }

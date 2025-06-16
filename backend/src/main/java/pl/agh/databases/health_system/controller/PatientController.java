@@ -45,19 +45,19 @@ public class PatientController {
 //    }
 
     @PostMapping("/relatives/{id}")
-    public ResponseEntity<Void> addRelative(@PathVariable ("id") Long patientId, @RequestParam() Long relativeId){
+    public ResponseEntity<Void> addRelative(@PathVariable ("id") Long patientId, @RequestParam("relative_id") Long relativeId){
         patientService.addRelative(patientId, relativeId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/relatives/{id}")
-    public ResponseEntity<Void> deleteRelative(@PathVariable ("id") Long patientId, @RequestParam() Long relativeId){
+    public ResponseEntity<Void> deleteRelative(@PathVariable ("id") Long patientId, @RequestParam("relative_id") Long relativeId){
         patientService.deleteRelative(patientId, relativeId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/recommended/{id}")
-    public ResponseEntity<Void> recommendDoctorVisit(@PathVariable("id") Long patientId, @RequestParam Long visitId){
+    public ResponseEntity<Void> recommendDoctorVisit(@PathVariable("id") Long patientId, @RequestParam("visit_id") Long visitId){
         patientService.recommendDoctorVisit(patientId, visitId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

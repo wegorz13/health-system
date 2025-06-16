@@ -10,8 +10,7 @@ import java.util.List;
 
 public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     @Query("""
-    MATCH (p:Patient)
-    WHERE id(p) = $patientId
+    MATCH (p:Patient {id: $patientId})
     MATCH (p)-[:HAS_VISIT]->(v:Visit)
     MATCH (v)<-[:CONDUCTED_BY]-(d:Doctor)
     OPTIONAL MATCH (v)-[:TOOK_PLACE_IN]->(h:Hospital)
@@ -20,8 +19,7 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     List<Visit> findByPatientId(Long patientId);
 
     @Query("""
-    MATCH (d:Doctor)
-    WHERE id(d) = $doctorId
+    MATCH (d:Doctor {id: $doctorId})
     MATCH (v:Visit)-[:CONDUCTED_BY]->(d)
     OPTIONAL MATCH (v)-[:TOOK_PLACE_IN]->(h:Hospital)
     RETURN v, d, h
@@ -29,8 +27,7 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
     List<Visit> findByDoctorId(Long doctorId);
 
     @Query("""
-    MATCH (v:Visit)-[:TOOK_PLACE_IN]->(h:Hospital)
-    WHERE id(h) = $hospitalId
+    MATCH (v:Visit)-[:TOOK_PLACE_IN]->(h:Hospital {id: $hospitalId})
     OPTIONAL MATCH (v)<-[:CONDUCTED_BY]-(d:Doctor)
     RETURN v, d, h
 """)
@@ -38,8 +35,7 @@ public interface VisitRepository extends Neo4jRepository<Visit, Long> {
 
     @Query("""
     RETURN EXISTS{
-    MATCH (d:Doctor)
-    WHERE id(d)=$doctorId
+    MATCH (d:Doctor {id: $doctorId})
     MATCH
       (d)<-[:CONDUCTED_BY]-(v:Visit)
     WHERE date(v.date).year = date($date).year AND

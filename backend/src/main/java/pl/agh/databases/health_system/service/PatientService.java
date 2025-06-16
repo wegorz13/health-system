@@ -5,15 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.agh.databases.health_system.domain.Visit;
-import pl.agh.databases.health_system.dto.DoctorDTO;
 import pl.agh.databases.health_system.dto.PatientDTO;
 import pl.agh.databases.health_system.exceptions.PatientAlreadyRecommendsVisitException;
 import pl.agh.databases.health_system.exceptions.PatientAlreadyRelativeException;
 import pl.agh.databases.health_system.exceptions.ResourceNotFoundException;
-import pl.agh.databases.health_system.mapper.DoctorMapper;
 import pl.agh.databases.health_system.mapper.PatientMapper;
 import pl.agh.databases.health_system.domain.Patient;
-import pl.agh.databases.health_system.repository.DoctorRepository;
 import pl.agh.databases.health_system.repository.PatientRepository;
 import pl.agh.databases.health_system.dto.request.CreatePatientRequest;
 import pl.agh.databases.health_system.repository.VisitRepository;
@@ -26,7 +23,6 @@ public class PatientService {
     private final PatientRepository patientRepository;
     private final PasswordEncoder passwordEncoder;
     private final VisitRepository visitRepository;
-    private final DoctorRepository doctorRepository;
 
     @Transactional
     public PatientDTO createPatient(CreatePatientRequest request) {
@@ -56,20 +52,11 @@ public class PatientService {
         })).toList();
     }
 
-//    public List<Visit> getPatientVisits(Long patientId) {
-//        return visitRepository.findByPatientId(patientId);
-//    }
-
 
      List<Long> findNthRelativesIdsByPatientId(Long patientId,int depth){
         return patientRepository.findNthRelativesIdsByPatientId(patientId,depth);
      }
 
-    public List<DoctorDTO> getDoctorsRecommendedByPatientRelatives(Long patientId, int depth) {
-        List<Long> relativeIds = patientRepository.findNthRelativesIdsByPatientId(patientId, depth);
-
-        return doctorRepository.findDoctorsRecommendedByPatientIds(relativeIds).stream().map(DoctorMapper::toDTO).toList();
-    }
 
     public void addRelative(Long patientId, Long relativeId) {
         verifyPatientAndRelativeExistOrThrow(patientId, relativeId);
