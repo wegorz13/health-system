@@ -138,8 +138,8 @@ Usuwanie danych:
 
 - wraz z lekarzem usuwane są jego przyszłe wizyty i jego godziny pracy
 - wraz ze szpitalem usuwane są przyszłe wizyty które w nim się odbywają
-- wraz z pacjentem usuwane są jego wszystkie wizyty DO DODANIA
-- wraz z dniem pracy lekarza usuwane są wizyty które wtedy się odbywają DO DODANIA
+- wraz z pacjentem usuwane są jego wszystkie wizyty
+- wraz z dniem pracy lekarza usuwane są wizyty które wtedy się odbywają
 
 ## Strona klienta
 
@@ -153,3 +153,9 @@ Na stronie głównej znajduje się wyszukiwarka lekarzy. Możliwe jest filtrowan
 
 Na stronie rezerwacji możliwe jest wybranie jednego ze szpitali w którym lekarz pracuje oraz zaznaczenie interesującej nas daty.
 ![alt text](./images/reservation.png)
+
+### Strona lekarza
+
+Na stronie lekarza widoczne są jego dane i standardowe godziny pracy w konkretnych szpitalach.
+
+![alt text](./images/doctor.png)

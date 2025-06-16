@@ -11,6 +11,13 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
     Optional<Patient> findPatientByUsername(String username);
 
     @Query("""
+    MATCH (p:Patient)-[:HAS_VISIT]->(v:Visit)
+    WHERE id(p) = $patientId
+    RETURN p, collect(v)
+""")
+    Optional<Patient> findWithVisitsById(Long patientId);
+
+    @Query("""
         MATCH (:Patient {id: $patientId}) - [:IS_RELATED] - (relatives:Patient) 
         RETURN relatives
     """)

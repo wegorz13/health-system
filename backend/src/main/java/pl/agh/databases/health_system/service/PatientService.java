@@ -39,7 +39,7 @@ public class PatientService {
     }
 
     public void deletePatient(Long patientId) {
-        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+        Patient patient = patientRepository.findWithVisitsById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         visitRepository.deleteAll(patient.getVisits());
         patientRepository.delete(patient);
