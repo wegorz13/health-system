@@ -107,7 +107,8 @@ public class WorkDaySchedule {
 }
 ```
 
-<!-- tutaj screenshoty z auradb -->
+![alt text](./images/schema.png)
+Przykładowy fragment bazy danych
 
 ## Endpointy
 
@@ -141,6 +142,113 @@ Usuwanie danych:
 - wraz z pacjentem usuwane są jego wszystkie wizyty
 - wraz z dniem pracy lekarza usuwane są wizyty które wtedy się odbywają
 
+Bezpośrednie operacje na bazie:
+
+### DoctorRepository
+
+```java
+public interface DoctorRepository extends Neo4jRepository<Doctor, Long> {
+    @Query("""
+    MATCH (h:Hospital {id: $hospitalId}) <-[:WORKS_AT]-(docs:Doctor)
+    RETURN docs""")
+    List<Doctor> findDoctorsByHospitalId(Long hospitalId);
+
+    @Query("MATCH (:Patient {id: $patientId}) <- [:BELONGS_TO_PATIENT] - (:Visit) <- [:CONDUCTED_BY] - (docs:Doctor) RETURN docs")
+    List<Doctor> findDoctorsByPatientId(Long patientId);
+}
+```
+
+### PatientRepository
+
+```java
+public interface PatientRepository extends Neo4jRepository<Patient, Long> {
+    Optional<Patient> findPatientByUsername(String username);
+
+    @Query("""
+    MATCH (p:Patient)-[:HAS_VISIT]->(v:Visit)
+    WHERE id(p) = $patientId
+    RETURN p, collect(v)
+""")
+    Optional<Patient> findWithVisitsById(Long patientId);
+
+    @Query("""
+        MATCH (:Patient {id: $patientId}) - [:IS_RELATED] - (relatives:Patient)
+        RETURN relatives
+    """)
+    List<Patient> findRelativesById(Long patientId);
+
+    @Query("""
+        MATCH (:Patient {id: $patientId}) - [:IS_RELATED*1..$depth] - (relative:Patient)
+        RETURN DISTINCT relative
+    """)
+    List<Long> findNthRelativesIdsByPatientId(Long patientId, int depth);
+
+    @Query("RETURN EXISTS { MATCH (:Patient {id: $patientId}) -[:IS_RELATED]- (:Patient {id: $relativeId}) }")
+    boolean verifyIsRelative(Long patientId, Long relativeId);
+
+    @Query("""
+        MATCH (patient:Patient {id: $patientId}) -[r:IS_RELATED]- (relative:Patient {id: $relativeId})
+        DELETE r
+    """)
+    void deleteRelative(Long patientId, Long relativeId);
+
+    @Query("""
+        MATCH (patient:Patient {id: $patientId})
+        MATCH (relative:Patient {id: $relativeId})
+        CREATE (patient)-[:IS_RELATED]->(relative)
+    """)
+    void addRelativeToPatient(Long patientId, Long relativeId);
+
+    @Query("""
+        MATCH (patients:Patient) - [:HAS_VISIT] -> (v:Visit) - [:IS_CONDUCTED_BY] -> (:Doctor {id: $doctorId})
+        RETURN patients, v
+    """)
+    List<Patient> findByDoctorId(Long doctorId);
+}
+```
+
+### VisitRepository
+
+```java
+public interface VisitRepository extends Neo4jRepository<Visit, Long> {
+    @Query("""
+    MATCH (p:Patient {id: $patientId})
+    MATCH (p)-[:HAS_VISIT]->(v:Visit)
+    MATCH (v)<-[:CONDUCTED_BY]-(d:Doctor)
+    OPTIONAL MATCH (v)-[:TOOK_PLACE_IN]->(h:Hospital)
+    RETURN v, d, h
+""")
+    List<Visit> findByPatientId(Long patientId);
+
+    @Query("""
+    MATCH (d:Doctor {id: $doctorId})
+    MATCH (v:Visit)-[:CONDUCTED_BY]->(d)
+    OPTIONAL MATCH (v)-[:TOOK_PLACE_IN]->(h:Hospital)
+    RETURN v, d, h
+    """)
+    List<Visit> findByDoctorId(Long doctorId);
+
+    @Query("""
+    MATCH (v:Visit)-[:TOOK_PLACE_IN]->(h:Hospital {id: $hospitalId})
+    OPTIONAL MATCH (v)<-[:CONDUCTED_BY]-(d:Doctor)
+    RETURN v, d, h
+""")
+    List<Visit> findByHospitalId(Long hospitalId);
+
+    @Query("""
+    RETURN EXISTS{
+    MATCH (d:Doctor {id: $doctorId})
+    MATCH
+      (d)<-[:CONDUCTED_BY]-(v:Visit)
+    WHERE date(v.date).year = date($date).year AND
+          date(v.date).month = date($date).month AND
+          date(v.date).day = date($date).day AND
+          abs(duration.between(v.date, $date).minutes) <= $visitDuration}
+    """)
+    boolean areVisitsColliding(Long doctorId, LocalDateTime date, int visitDuration);
+}
+```
+
 ## Strona klienta
 
 ### Strona główna
@@ -158,4 +266,4 @@ Na stronie rezerwacji możliwe jest wybranie jednego ze szpitali w którym lekar
 
 Na stronie lekarza widoczne są jego dane i standardowe godziny pracy w konkretnych szpitalach.
 
-![alt text](./images/doctor.png)
+![alt text](./images/doctor2.png)

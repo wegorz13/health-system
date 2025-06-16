@@ -50,5 +50,4 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
         RETURN patients, v
     """)
     List<Patient> findByDoctorId(Long doctorId);
-
 }
