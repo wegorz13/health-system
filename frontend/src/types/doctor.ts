@@ -1,5 +1,6 @@
-import type {Hospital} from "./hospital.ts";
+import type { Hospital } from "./hospital.ts";
 
+// Update to match DoctorDTO from Java backend
 export interface Doctor {
   id: number;
   fullName: string;
@@ -16,4 +17,11 @@ export interface Doctor {
       sunday?: string[];
     };
   }[];
+}
+
+// Add WorkDaySchedule interface to match WorkDayScheduleDTO
+export interface WorkDaySchedule {
+  startTime: string;
+  endTime: string;
+  hospitalName: string;
 }

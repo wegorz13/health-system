@@ -1,14 +1,11 @@
 import { useState, useMemo } from "react";
-import { 
-  Box, 
-  Typography, 
-  CircularProgress
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import DoctorCardList from "../DoctorCardList";
 import DoctorSearchBar from "./DoctorSearchBar";
 import type { DoctorSearchFilters } from "./DoctorSearchBar";
 import { useDoctors } from "../../hooks/useDoctor";
 import { useHospitals } from "../../hooks/useHospital";
+import { LoadingSpinner, ErrorMessage } from "../ui"; // Import UI components
 
 interface DoctorSearchProps {
   title?: string;
@@ -91,19 +88,11 @@ export default function DoctorSearchAndList({
         : "No doctors found";
   
   if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingSpinner message="Loading doctors..." />;
   }
   
   if (error) {
-    return (
-      <Box sx={{ p: 3, bgcolor: '#FFF4F4', borderRadius: 1, color: '#D32F2F' }}>
-        <Typography>Error loading doctors: {error.message}</Typography>
-      </Box>
-    );
+    return <ErrorMessage message={`Error loading doctors: ${error.message}`} />;
   }
   
   return (
