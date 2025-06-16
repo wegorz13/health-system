@@ -1,11 +1,3 @@
-// Export all common types from here
-
-export interface Doctor {
-  id: string;
-  fullName: string;
-  // Add other doctor properties here
-}
-
 export interface AppointmentData {
   doctorId: string;
   hospitalId: string;
@@ -23,3 +15,6 @@ export interface BookingStatus {
   success: boolean;
   error: string | null;
 }
+
+// Re-export types from other files
+export * from './requests';

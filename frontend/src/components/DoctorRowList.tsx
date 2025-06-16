@@ -1,33 +1,71 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import DoctorCard from "./DoctorCard";
 import { type Doctor } from "../types/doctor";
-import { useMemo } from "react";
-import { useDoctors } from "../hooks/useDoctor";
+import { useState, useEffect } from "react";
+import { getRecommendedDoctors, getRelativeRecommendedDoctors } from "../services/dataService";
 
-interface DoctorsRowList {
+interface DoctorsRowListProps {
   title?: string;
   maxDoctors?: number;
-  onSortBy?: () => number;
+  type: "best" | "relative";
+  patientId?: number | string;
 }
 
 export default function DoctorsRowList({
-  title = "Recommended Doctors",
+  title,
   maxDoctors = 3,
-  onSortBy = () => 0.5 - Math.random(),
-}: DoctorsRowList) {
-  // Fetch all doctors
-  const { data: allDoctors, loading, error } = useDoctors();
+  type,
+  patientId
+}: DoctorsRowListProps) {
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  // Mock recommendation logic - in a real app, this would use actual recommendation algorithm
-  const recommendedDoctors = useMemo(() => {
-    if (!allDoctors) return [];
+  useEffect(() => {
+    async function fetchDoctors() {
+      try {
+        setLoading(true);
+        let fetchedDoctors: Doctor[];
+        
+        if (type === "best") {
+          // Fetch best recommended doctors
+          fetchedDoctors = await getRecommendedDoctors();
+        } else if (type === "relative" && patientId) {
+          // Fetch doctors recommended based on relatives
+          fetchedDoctors = await getRelativeRecommendedDoctors(patientId);
+        } else {
+          // Default case - return empty array
+          fetchedDoctors = [];
+        }
+        
+        setDoctors(fetchedDoctors.slice(0, maxDoctors));
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to fetch doctors'));
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchDoctors();
+  }, [type, patientId, maxDoctors]);
 
-    // For now, just randomly select doctors as "recommended"
-    return [...allDoctors].sort(onSortBy).slice(0, maxDoctors);
-  }, [allDoctors, maxDoctors,onSortBy]);
+  // Show loading indicator
+  if (loading) {
+    return (
+      <Box sx={{ py: 4, textAlign: 'center' }}>
+        <CircularProgress size={40} />
+      </Box>
+    );
+  }
 
-  // Don't show anything if there's no data or an error
-  if (loading || error || !recommendedDoctors.length) {
+  // Show error message
+  if (error) {
+    console.error('Error loading doctors:', error);
+    return null; // Hide component on error
+  }
+
+  // Don't show anything if there's no data
+  if (!doctors.length) {
     return null;
   }
 
@@ -42,18 +80,18 @@ export default function DoctorsRowList({
           display: "grid",
           gridTemplateColumns: {
             xs: "1fr",
-            sm: recommendedDoctors.length > 1 ? "repeat(2, 1fr)" : "1fr",
+            sm: doctors.length > 1 ? "repeat(2, 1fr)" : "1fr",
             md:
-              recommendedDoctors.length > 2
+              doctors.length > 2
                 ? "repeat(3, 1fr)"
-                : recommendedDoctors.length > 1
+                : doctors.length > 1
                 ? "repeat(2, 1fr)"
                 : "1fr",
           },
           gap: 3,
         }}
       >
-        {recommendedDoctors.map((doctor) => (
+        {doctors.map((doctor) => (
           <Box key={doctor.id} sx={{ height: "100%" }}>
             <DoctorCard doctor={doctor} />
           </Box>

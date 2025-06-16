@@ -1,13 +1,13 @@
 import { 
   Box, 
   TextField, 
-  Autocomplete, 
   Paper,
   InputAdornment,
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import { ComboBox } from "../ui"; // Import ComboBox from UI
 
 export interface DoctorSearchFilters {
   searchTerm: string;
@@ -55,51 +55,27 @@ export default function DoctorSearchBar({
           />
         </Box>
         
-        {/* City filter */}
+        {/* City filter - Use ComboBox */}
         <Box sx={{ flex: '1 1 250px' }}>
-          <Autocomplete
+          <ComboBox 
             options={cities}
             value={filters.selectedCity}
-            onChange={(_, newValue) => onFilterChange({ selectedCity: newValue })}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Filter by city"
-                placeholder="Select a city"
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LocationOnIcon color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
+            onChange={(newValue) => onFilterChange({ selectedCity: newValue })}
+            label="Filter by city"
+            placeholder="Select a city"
+            startIcon={<LocationOnIcon color="action" />}
           />
         </Box>
 
-        {/* Specialty filter */}
+        {/* Specialty filter - Use ComboBox */}
         <Box sx={{ flex: '1 1 250px' }}>
-          <Autocomplete
+          <ComboBox 
             options={specialties}
             value={filters.selectedSpecialty}
-            onChange={(_, newValue) => onFilterChange({ selectedSpecialty: newValue })}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Filter by specialty"
-                placeholder="Select a specialty"
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <MedicalServicesIcon color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
+            onChange={(newValue) => onFilterChange({ selectedSpecialty: newValue })}
+            label="Filter by specialty"
+            placeholder="Select a specialty"
+            startIcon={<MedicalServicesIcon color="action" />}
           />
         </Box>
 

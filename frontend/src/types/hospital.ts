@@ -1,5 +1,6 @@
-import type {Doctor} from './doctor';
+import type { Doctor } from './doctor';
 
+// Updated to match HospitalDTO
 export interface Hospital {
     id: number;
     name: string;

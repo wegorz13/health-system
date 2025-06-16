@@ -31,8 +31,9 @@ export const mockHospitals: Hospital[] = [
   }
 ];
 
-// Mock Doctors
-export const mockDoctors: Doctor[] = [  {
+// Mock Doctors - renamed to baseDoctors to avoid naming conflict
+const baseDoctors: Doctor[] = [
+  {
     id: 1,
     fullName: "Dr. Jan Kowalski",
     specialty: "Cardiology",
@@ -108,12 +109,32 @@ export const mockDoctors: Doctor[] = [  {
   }
 ];
 
-// Update hospital doctors references
+// Update hospital doctors references - now referencing mockDoctors which we'll define later
+mockHospitals[0].doctors = [];  // These will be populated after mockDoctors is defined
+mockHospitals[1].doctors = [];
+mockHospitals[2].doctors = [];
+
+// Define specialty descriptions for improved doctor information
+export const specialtyDescriptions = {
+  "Cardiology": "Specializes in diagnosing and treating diseases or conditions of the heart and blood vessels.",
+  "Pediatrics": "Focuses on the health and medical care of infants, children, and adolescents.",
+  "Orthopedics": "Concentrates on the diagnosis, correction, prevention, and treatment of patients with skeletal deformities.",
+  "Neurology": "Deals with the diagnosis and treatment of all categories of conditions and disease involving the brain and nervous system.",
+  "Dermatology": "Specializes in the diagnosis, treatment, and prevention of skin, hair, nail, and mucous membrane disorders."
+};
+
+// Add bios to doctors for more detailed information
+export const mockDoctors: Doctor[] = baseDoctors.map(doctor => ({
+  ...doctor,
+  bio: `Dr. ${doctor.fullName.split(' ')[1]} is a highly qualified ${doctor.specialty.toLowerCase()} specialist with over ${Math.floor(Math.random() * 15) + 5} years of experience. ${Math.random() > 0.5 ? 'They graduated with honors from the Medical University of Warsaw.' : 'They completed their medical training at Jagiellonian University Medical College.'} They are known for their ${['compassionate', 'thorough', 'patient-centered', 'innovative', 'detail-oriented'][Math.floor(Math.random() * 5)]} approach to healthcare.`
+}));
+
+// Now populate the hospital doctors using the enhanced mockDoctors
 mockHospitals[0].doctors = [mockDoctors[0], mockDoctors[1], mockDoctors[4]];
 mockHospitals[1].doctors = [mockDoctors[0], mockDoctors[2], mockDoctors[4]];
 mockHospitals[2].doctors = [mockDoctors[2], mockDoctors[3]];
 
-// Mock Visits
+// Mock Visits - update to use the mockDoctors (with bios) rather than the base doctors
 export const mockVisits: Visit[] = [
   {
     id: 1,
@@ -213,5 +234,43 @@ export const mockPatients: Patient[] = [
     gender: "Male",
     roles: "PATIENT",
     visits: []
+  },
+  {
+    id: 6,
+    firstName: "Magdalena",
+    lastName: "Kowalczyk",
+    username: "mkowalczyk",
+    email: "magdalena.kowalczyk@example.com",
+    dateOfBirth: "1982-04-18",
+    gender: "Female",
+    roles: "PATIENT",
+    visits: []
+  },
+  {
+    id: 7,
+    firstName: "Krzysztof",
+    lastName: "Wojciechowski",
+    username: "kwojciechowski",
+    email: "krzysztof.wojciechowski@example.com",
+    dateOfBirth: "1979-12-03",
+    gender: "Male",
+    roles: "PATIENT",
+    visits: []
   }
+];
+
+// Define family relationships for recommendations
+export const mockFamilyRelationships = [
+  { patientId: 1, relativeIds: [2, 6] },  // Adam is related to Ewa and Magdalena
+  { patientId: 3, relativeIds: [4, 7] },  // Michał is related to Karolina and Krzysztof
+  { patientId: 5, relativeIds: [6] }      // Paweł is related to Magdalena
+];
+
+// Mock ratings for doctors (for recommendations)
+export const mockDoctorRatings = [
+  { doctorId: 1, averageRating: 4.8, numberOfRatings: 124 },
+  { doctorId: 2, averageRating: 4.6, numberOfRatings: 89 },
+  { doctorId: 3, averageRating: 4.9, numberOfRatings: 156 },
+  { doctorId: 4, averageRating: 4.7, numberOfRatings: 102 },
+  { doctorId: 5, averageRating: 4.5, numberOfRatings: 78 }
 ];

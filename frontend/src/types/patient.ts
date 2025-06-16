@@ -1,5 +1,6 @@
 import type { Visit } from "./visit";
 
+// Updated to match PatientDTO
 export interface Patient {
   id: number;
   firstName: string;
@@ -9,5 +10,5 @@ export interface Patient {
   dateOfBirth: string;
   gender: string;
   roles: string;
-  visits: Visit[];
+  visits?: Visit[]; // Made optional since it's not in PatientDTO
 }

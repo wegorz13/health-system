@@ -1,7 +1,9 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Container, Paper, Grid } from "@mui/material";
 import DoctorHoursList from "../components/DoctorHoursList";
 import { useParams } from "react-router-dom";
 import { useDoctor } from "../hooks";
+import { LoadingSpinner, ErrorMessage } from "../components/ui"; // Use the UI components
+import DoctorInfo from "../components/doctor/DoctorInfo";
 
 /**
  * Doctor details page component
@@ -11,33 +13,34 @@ export default function DoctorPage() {
     const { id } = useParams<{ id: string }>();
     const { data: doctor, loading, error } = useDoctor(id);
     
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+    
+    if (error) {
+        return <ErrorMessage message={`Error loading doctor: ${error.message}`} />;
+    }
+    
+    if (!doctor) {
+        return <ErrorMessage message="No doctor found with this ID" severity="warning" />;
+    }
+    
     return (
-        <>
-            {loading ? (
-                <Typography>Loading...</Typography>
-            ) : error ? (
-                <Typography color="error">Error loading doctor: {error.message}</Typography>
-            ) : doctor ? (
-                <Box sx={{ flexGrow: 1 }}>
-                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, alignItems: 'center' }}>
-                        <Box>
-                            <Typography variant="h5" fontWeight="bold">
-                                {doctor.fullName}
-                            </Typography>
-                        </Box>
-                        <Box>
-                            <DoctorHoursList doctor={doctor} />
-                        </Box>
-                        <Box>
-                            <Typography variant="subtitle1">
-                                Specialty: {doctor.specialty}
-                            </Typography>
-                        </Box>
-                    </Box>
-                </Box>
-            ) : (
-                <Typography>No doctor found with this ID</Typography>
-            )}
-        </>
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 6 }}>
+            <Paper elevation={2} sx={{ p: 3 }}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={6}>
+                        <DoctorInfo doctor={doctor} />
+                    </Grid>
+                    
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h6" gutterBottom>
+                            Working Hours
+                        </Typography>
+                        <DoctorHoursList doctor={doctor} />
+                    </Grid>
+                </Grid>
+            </Paper>
+        </Container>
     );
 }

@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useDoctor } from "../hooks";
 import { BookingForm } from "../components/BookingForm";
-import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { LoadingSpinner, ErrorMessage } from "../components/ui";
 
 export default function BookAppointmentPage() {
   const { doctorId } = useParams<{ doctorId: string }>();
@@ -37,9 +37,7 @@ export default function BookAppointmentPage() {
   if (error || !doctor) {
     return (
       <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Alert severity="error">
-          {error ? error.message : "Doctor not found"}
-        </Alert>
+        <ErrorMessage message={error ? error.message : "Doctor not found"} />
       </Container>
     );
   }
@@ -47,9 +45,7 @@ export default function BookAppointmentPage() {
   if (bookingStatus.success) {
     return (
       <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Alert severity="success">
-          Your appointment with Dr. {doctor.fullName} has been successfully booked! Redirecting...
-        </Alert>
+        <ErrorMessage message={`Your appointment with Dr. ${doctor.fullName} has been successfully booked! Redirecting...`} severity="success" />
       </Container>
     );
   }
