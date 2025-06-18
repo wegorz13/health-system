@@ -16,16 +16,15 @@ public class HospitalController {
     private final HospitalService hospitalService;
 
     @PostMapping
-    public ResponseEntity<Void> createHospital(@RequestBody CreateHospitalRequest request) {
-        hospitalService.createHospital(request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<HospitalDTO> createHospital(@RequestBody CreateHospitalRequest request) {
+        return ResponseEntity.ok( hospitalService.createHospital(request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteHospital(@PathVariable("id") Long hospitalId) {
         hospitalService.deleteHospital(hospitalId);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/")

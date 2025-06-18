@@ -17,6 +17,11 @@ import java.util.List;
 public class PatientController {
     private final PatientService patientService;
 
+    @GetMapping("/")
+    public ResponseEntity<List<PatientDTO>> getAllPatients() {
+        return ResponseEntity.ok(patientService.getAllPatients());
+    }
+
     @GetMapping("/auth/me")
     public ResponseEntity<String> getLoggedInUser(Principal principal) {
         return ResponseEntity.ok(principal.getName());

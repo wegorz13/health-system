@@ -30,10 +30,12 @@ public class HospitalService {
     private final WorkDayScheduleRepository workDayScheduleRepository;
     private final VisitRepository visitRepository;
 
-    public void createHospital(CreateHospitalRequest request) {
+    public HospitalDTO createHospital(CreateHospitalRequest request) {
         Hospital hospital = HospitalMapper.toEntity(request);
 
         hospitalRepository.save(hospital);
+
+        return HospitalMapper.toDTO(hospital);
     }
 
     public void deleteHospital(Long hospitalId) {

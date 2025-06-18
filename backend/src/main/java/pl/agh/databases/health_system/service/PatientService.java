@@ -24,6 +24,10 @@ public class PatientService {
     private final PasswordEncoder passwordEncoder;
     private final VisitRepository visitRepository;
 
+    public List<PatientDTO> getAllPatients() {
+        return patientRepository.findAll().stream().map(PatientMapper::toResponse).toList();
+    }
+
     @Transactional
     public PatientDTO createPatient(CreatePatientRequest request) {
         Patient patient = PatientMapper.toEntity(request);
